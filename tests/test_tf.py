@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import unittest
-import tf
+from thefoxUtils import tf
 
 
 class TextFileTests(unittest.TestCase):
@@ -15,45 +15,45 @@ class TextFileTests(unittest.TestCase):
     # Line endings
 
     def test_dos(self):
-        filename = 'tests/dos.txt'
+        filename = 'data/dos.rawtxt'
         self.assertEqual('nl: dos ws: eol', tf.process_file(None, None, None, filename))
 
     def test_mac(self):
-        filename = 'tests/mac.txt'
+        filename = 'data/mac.rawtxt'
         self.assertEqual('nl: mac', tf.process_file(None, None, None, filename))
 
     def test_unix(self):
-        filename = 'tests/unix.txt'
+        filename = 'data/unix.rawtxt'
         self.assertEqual('ws: eol eof', tf.process_file(None, None, None, filename))
 
     def test_missing_dos(self):
-        filename = 'tests/missing-dos.txt'
+        filename = 'data/missing-dos.rawtxt'
         self.assertEqual('nl: dos missing ws: eol', tf.process_file(None, None, None, filename))
 
     def test_missing_unix(self):
-        filename = 'tests/missing-unix.txt'
+        filename = 'data/missing-unix.rawtxt'
         self.assertEqual('nl: unix missing ws: eol', tf.process_file(None, None, None, filename))
 
     def test_changeOS(self):
-        filename = 'tests/change_os.txt'
+        filename = 'data/change_os.rawtxt'
         self.assertEqual('nl: dos unix ws: eof', tf.process_file(None, None, None, filename))
 
     # Normalization forms
 
     def test_nf_c(self):
-        filename = 'tests/nf-c.txt'
+        filename = 'data/nf-c.txt'
         self.assertEqual('nf: c', tf.process_file(None, None, None, filename))
 
     def test_nf_d(self):
-        filename = 'tests/nf-d.txt'
+        filename = 'data/nf-d.txt'
         self.assertEqual('nf: d', tf.process_file(None, None, None, filename))
 
     def test_nf_both(self):
-        filename = 'tests/nf-both.txt'
+        filename = 'data/nf-both.txt'
         self.assertEqual('', tf.process_file(None, None, None, filename))
 
     def test_nf_none(self):
-        filename = 'tests/nf-none.txt'
+        filename = 'data/nf-none.txt'
         self.assertEqual('nf:', tf.process_file(None, None, None, filename))
 
     def test_nfc_tus1(self):
@@ -99,7 +99,7 @@ class TextFileTests(unittest.TestCase):
     # code still needs to be written for this
     def ignore_test_textMode(self):
         """Find occurrences of \r\r\n (that is CR CR LF) for a newline."""
-        filename = 'tests/text_mode.txt'
+        filename = 'data/text_mode.rawtxt'
         self.assertEqual(filename + ': confused', tf.process_file(None, None, None, filename))
 
 

@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 import unittest
-import unidump
+from thefoxUtils import unidump
 
 
 class UnidumpTests(unittest.TestCase):
 
     def setUp(self):
-        ucd = unidump.read_nameslist("tests/nameslist.lst")
+        ucd = unidump.read_nameslist("data/nameslist.lst")
         self.options = unidump.Options("dump", "utf_8", False, False, False, False, ucd)
 
     def tearDown(self):
@@ -21,29 +21,29 @@ class UnidumpTests(unittest.TestCase):
     # dump file position
 
     def test_posStart(self):
-        self.assertEqual("U+0031 DIGIT ONE", next(unidump.dumpfile(self.options, "tests/position.txt", 1, 1)))
+        self.assertEqual("U+0031 DIGIT ONE", next(unidump.dumpfile(self.options, "data/position.txt", 1, 1)))
 
     def test_posLine(self):
-        self.assertEqual("U+0032 DIGIT TWO", next(unidump.dumpfile(self.options, "tests/position.txt", 2, 1)))
+        self.assertEqual("U+0032 DIGIT TWO", next(unidump.dumpfile(self.options, "data/position.txt", 2, 1)))
 
     def test_posLineColumn(self):
-        self.assertEqual("U+0034 DIGIT FOUR", next(unidump.dumpfile(self.options, "tests/position.txt", 4, 6)))
+        self.assertEqual("U+0034 DIGIT FOUR", next(unidump.dumpfile(self.options, "data/position.txt", 4, 6)))
 
     # count
 
     def test_countFile(self):
-        unidump.countfile(self.options, "tests/position.txt", 1, 1)
+        unidump.countfile(self.options, "data/position.txt", 1, 1)
         self.assertEqual(2, self.options.count['1'], 'one')
         self.assertEqual(2, self.options.count['4'], 'four')
         self.assertEqual(3, self.options.count['e'], 'letter e')
 
     def test_countFiles(self):
         # this displays the output
-        # unidump.countfiles(self.options, ["tests/position.txt", "tests/position.txt"], 1, 1)
+        # unidump.countfiles(self.options, ["data/position.txt", "data/position.txt"], 1, 1)
 
         # does not display the output, but does tests a (slightly) different function
-        unidump.countfile(self.options, "tests/position.txt", 1, 1)
-        unidump.countfile(self.options, "tests/position.txt", 1, 1)
+        unidump.countfile(self.options, "data/position.txt", 1, 1)
+        unidump.countfile(self.options, "data/position.txt", 1, 1)
 
         self.assertEqual(4, self.options.count['1'], 'one')
         self.assertEqual(4, self.options.count['4'], 'four')

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import unikey
+from thefoxUtils import unikey
 
 
 def test_modify():
