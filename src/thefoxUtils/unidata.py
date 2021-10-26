@@ -4,7 +4,6 @@ import argparse
 import csv
 
 parser = argparse.ArgumentParser()
-# parser.add_argument("-a", "--album", help="name of album to place into")
 parser.add_argument("files", help="files to read", nargs="*")
 parser.add_argument("--version", action="version", version="%(prog)s 0.1")
 args = parser.parse_args()

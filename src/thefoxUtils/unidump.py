@@ -1,77 +1,41 @@
 #!/usr/bin/python3
 
-import getopt
-import sys
 import os
 import os.path
-
 import re
+import argparse
 
 
 def main():
-    try:
-        options = "c:e:hl:opv"
-        long_options = ["column=", "count", "eol", "debug", "encoding=", "help", "line=", "octets", "python", "version"]
-        opts, args = getopt.getopt(sys.argv[1:], options, long_options)
-    except getopt.GetoptError:
-        help()
-        sys.exit(2)
-
-    # option defaults
-    mode = 'dump'
-    debug = False
-    encoding = "utf-8"
-    show_octets = False
-    python_escape = False
-    line = 1
-    column = 1
-    stop = False
-
-    for o, a in opts:
-        if o in ("-c", "--column"):
-            column = int(a)
-        if o in "--eol":
-            stop = True
-        if o in "--count":
-            mode = 'count'
-        if o in "--debug":
-            debug = True
-        if o in ("-e", "--encoding"):
-            encoding = a
-        if o in ("-l", "--line"):
-            line = int(a)
-        if o in ("-o", "--octets"):
-            show_octets = True
-        if o in ("-p", "--python"):
-            python_escape = True
-        if o in ("-h", "--help"):
-            help()
-            sys.exit()
-        if o in ("-v", "--version"):
-            version(sys.argv[0])
-            sys.exit()
+    parser = argparse.ArgumentParser(description='Show USV values of characters in a file')
+    parser.add_argument('--count', help='count characters instead of just listing them',
+                        action='store_true')
+    parser.add_argument('-e', '--encoding', help='specify the encoding to display octets',
+                        default='utf-8')
+    parser.add_argument('-o', '--octets', help='also display the bytes stored for each character',
+                        action='store_true')
+    parser.add_argument('-p', '--python', help='output escaped text for use with Python',
+                        action='store_true')
+    parser.add_argument('--debug', help='display extra messages when reading a file',
+                        action='store_true')
+    parser.add_argument('-l', '--line', help='line number to start reading from',
+                        type=int, default=1)
+    parser.add_argument('-c', '--column', help='column number to start reading from',
+                        type=int, default=1)
+    parser.add_argument('--eol', help='read only to the end of the line',
+                        action='store_true')
+    parser.add_argument('file', help='file to process', nargs='+')
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s ' + '(The Fox Utils) ' + '21.7')
+    args = parser.parse_args()
 
     nameslist_file = os.path.join(os.environ["HOME"], ".unidump", "nameslist.lst")
     ucd = read_nameslist(nameslist_file)
-    options = Options(mode, encoding, show_octets, python_escape, stop, debug, ucd)
-    if mode == 'count':
-        countfiles(options, args, line, column)
+    options = Options('na', args.encoding, args.octets, args.python, args.eol, args.debug, ucd)
+    if args.count:
+        countfiles(options, args.file, args.line, args.column)
     else:
-        dumpfiles(options, args, line, column)
-
-
-def help():
-    print("usage: unidump [--count] [-e|--encoding encoding] [-o|--octets] [-p|--python] [--debug] file1 file2 ...")
-    print("  [-l|--line number] [-c|--column number] [--eol] file")
-    print("values for encoding include ascii, cp*, iso8859_*, mac_*, utf_*, and others")
-
-    # a full list of encodings and aliases is available
-    # in the dictionary aliases in the file /usr/lib/python2.6/encodings/aliases.py
-    # and on the web at http://docs.python.org/library/codecs.html#standard-encodings
-
-
-def version(argv0):
-    print("%s (%s) %s" % (argv0, 'The Fox Utils', '21.4'))
+        dumpfiles(options, args.file, args.line, args.column)
 
 
 class Options(object):

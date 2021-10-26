@@ -1,39 +1,17 @@
 #!/usr/bin/python3
 
 import re
-import getopt
-import sys
+import argparse
 
 
 def main():
-    try:
-        options = "ho:v"
-        long_options = ["help", "output=", "version"]
-        opts, args = getopt.getopt(sys.argv[1:], options, long_options)
-    except getopt.GetoptError:
-        usage()
-        sys.exit(2)
+    parser = argparse.ArgumentParser(description='Produce literal text from escaped text')
+    parser.add_argument('-o', '--output', help='output file')
+    parser.add_argument('file', help='File to process', nargs='+')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + '(The Fox Utils) ' + '21.7')
+    args = parser.parse_args()
 
-    output_filename = ""
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        if o in ("-o", "--output"):
-            output_filename = a
-        if o in ("-v", "--version"):
-            version()
-            sys.exit()
-
-    create(output_filename, args)
-
-
-def usage():
-    print("usage: unikey -o|--output file.txt file.htxt")
-
-
-def version():
-    print("unikey version 1.1")
+    create(args.output, args.file)
 
 
 def literal2char(literal):
