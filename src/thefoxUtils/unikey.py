@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import re
+import os.path
 import argparse
 
 
@@ -11,7 +12,13 @@ def main():
     parser.add_argument('--version', action='version', version='%(prog)s ' + '(The Fox Utils) ' + '21.7')
     args = parser.parse_args()
 
-    create(args.output, args.file)
+    if args.output:
+        create(args.output, args.file)
+    else:
+        for input_filename in args.file:
+            (root, ext) = os.path.splitext(input_filename)
+            output_filename = f'{root}.txt'
+            create(output_filename, [input_filename])
 
 
 def literal2char(literal):

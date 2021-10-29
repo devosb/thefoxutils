@@ -50,7 +50,7 @@ def process_files(args):
         sep = ':'
         if reports != '':
             sep += ' '
-        print('{}{}{}'.format(filename, sep, reports))
+        print(f'{filename}{sep}{reports}')
 
 
 def process_file(requested_eol, normalization, whitespace, input_filename):

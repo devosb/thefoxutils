@@ -8,7 +8,9 @@ class UnidumpTests(unittest.TestCase):
 
     def setUp(self):
         ucd = unidump.read_nameslist("data/nameslist.lst")
-        self.options = unidump.Options("dump", "utf_8", False, False, False, False, ucd)
+        parser = unidump.cmdline()
+        args = parser.parse_args(["data/position.txt"])
+        self.options = unidump.Options(args, "dump", "utf_8", False, False, False, False, ucd)
 
     def tearDown(self):
         pass
@@ -73,6 +75,23 @@ class UnidumpTests(unittest.TestCase):
 
     def test_pythonNewline(self):
         self.assertEqual("\\u000a", unidump.python("\n"))
+
+    # escape
+
+    def test_escapeASCII(self):
+        self.assertEqual("A", unidump.escape("A"))
+
+    def test_escapeLatin1(self):
+        self.assertEqual("\\u00f1", unidump.escape("\u00F1"))
+
+    def test_escape1252(self):
+        self.assertEqual("\\u0161", unidump.escape("\u0161"))
+
+    def test_escapePlane1(self):
+        self.assertEqual("\\u1d510", unidump.escape("\U0001D510"))
+
+    def test_escapeNewline(self):
+        self.assertEqual("\\u000a", unidump.escape("\n"))
 
     # name
 

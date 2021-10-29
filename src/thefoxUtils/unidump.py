@@ -6,13 +6,15 @@ import re
 import argparse
 
 
-def main():
+def cmdline():
     parser = argparse.ArgumentParser(description='Show USV values of characters in a file')
     parser.add_argument('--count', help='count characters instead of just listing them',
                         action='store_true')
-    parser.add_argument('-e', '--encoding', help='specify the encoding to display octets',
+    parser.add_argument('--encoding', help='specify the encoding to display octets',
                         default='utf-8')
     parser.add_argument('-o', '--octets', help='also display the bytes stored for each character',
+                        action='store_true')
+    parser.add_argument('-e', '--escape', help='output escaped text for use with FTML',
                         action='store_true')
     parser.add_argument('-p', '--python', help='output escaped text for use with Python',
                         action='store_true')
@@ -27,11 +29,16 @@ def main():
     parser.add_argument('file', help='file to process', nargs='+')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + '(The Fox Utils) ' + '21.7')
+    return parser
+
+
+def main():
+    parser = cmdline()
     args = parser.parse_args()
 
     nameslist_file = os.path.join(os.environ["HOME"], ".unidump", "nameslist.lst")
     ucd = read_nameslist(nameslist_file)
-    options = Options('na', args.encoding, args.octets, args.python, args.eol, args.debug, ucd)
+    options = Options(args, 'na', args.encoding, args.octets, args.python, args.eol, args.debug, ucd)
     if args.count:
         countfiles(options, args.file, args.line, args.column)
     else:
@@ -40,7 +47,8 @@ def main():
 
 class Options(object):
 
-    def __init__(self, mode, encoding, show_octets, python_escape, stop, debug, ucd):
+    def __init__(self, args, mode, encoding, show_octets, python_escape, stop, debug, ucd):
+        self.args = args
         self.mode = mode
         self.encoding = encoding
         # self.nameslistFile = nameslist_file
@@ -128,7 +136,7 @@ def dumpfiles(options, input_filenames, start_line, start_column):
 
 def formatoutput(options, display):
     """Format contents of a file's output in a useful manor."""
-    if options.python_escape:
+    if options.python_escape or options.args.escape:
         if display == '\\u000a':
             return '\n'
         else:
@@ -198,6 +206,9 @@ def format(options, cc):
     if options.python_escape:
         # string literals do not need name or octets
         display = python(cc)
+    if options.args.escape:
+        # string literals do not need name or octets
+        display = escape(cc)
     return display
 
 
@@ -229,6 +240,14 @@ def python(cc):
         return cc
     if codepoint > 0xFFFF:
         return "\\U%08x" % codepoint
+    return "\\u%04x" % codepoint
+
+
+def escape(cc):
+    """Format the character for a FTML string."""
+    codepoint = ord(cc)
+    if 0x20 <= codepoint <= 0x7f:
+        return cc
     return "\\u%04x" % codepoint
 
 
