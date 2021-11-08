@@ -1,19 +1,22 @@
 #!/usr/bin/python3
 
+import os
 import unittest
+
 from thefoxUtils import unidump
 
 
 class UnidumpTests(unittest.TestCase):
 
     def setUp(self):
-        ucd = unidump.read_nameslist("data/nameslist.lst")
+        os.chdir('tests/data')
+        ucd = unidump.read_nameslist("nameslist.lst")
         parser = unidump.cmdline()
-        args = parser.parse_args(["data/position.txt"])
+        args = parser.parse_args(["position.txt"])
         self.options = unidump.Options(args, "dump", "utf_8", False, False, False, False, ucd)
 
     def tearDown(self):
-        pass
+        os.chdir('../..')
 
     # The two ignored tests pass on Ubuntu 9.04 with Python 2.6,
     # but fails on Windows XP with ActiveState Python 2.6.2.2.
@@ -23,29 +26,29 @@ class UnidumpTests(unittest.TestCase):
     # dump file position
 
     def test_posStart(self):
-        self.assertEqual("U+0031 DIGIT ONE", next(unidump.dumpfile(self.options, "data/position.txt", 1, 1)))
+        self.assertEqual("U+0031 DIGIT ONE", next(unidump.dumpfile(self.options, "position.txt", 1, 1)))
 
     def test_posLine(self):
-        self.assertEqual("U+0032 DIGIT TWO", next(unidump.dumpfile(self.options, "data/position.txt", 2, 1)))
+        self.assertEqual("U+0032 DIGIT TWO", next(unidump.dumpfile(self.options, "position.txt", 2, 1)))
 
     def test_posLineColumn(self):
-        self.assertEqual("U+0034 DIGIT FOUR", next(unidump.dumpfile(self.options, "data/position.txt", 4, 6)))
+        self.assertEqual("U+0034 DIGIT FOUR", next(unidump.dumpfile(self.options, "position.txt", 4, 6)))
 
     # count
 
     def test_countFile(self):
-        unidump.countfile(self.options, "data/position.txt", 1, 1)
+        unidump.countfile(self.options, "position.txt", 1, 1)
         self.assertEqual(2, self.options.count['1'], 'one')
         self.assertEqual(2, self.options.count['4'], 'four')
         self.assertEqual(3, self.options.count['e'], 'letter e')
 
     def test_countFiles(self):
         # this displays the output
-        # unidump.countfiles(self.options, ["data/position.txt", "data/position.txt"], 1, 1)
+        # unidump.countfiles(self.options, ["position.txt", "position.txt"], 1, 1)
 
         # does not display the output, but does tests a (slightly) different function
-        unidump.countfile(self.options, "data/position.txt", 1, 1)
-        unidump.countfile(self.options, "data/position.txt", 1, 1)
+        unidump.countfile(self.options, "position.txt", 1, 1)
+        unidump.countfile(self.options, "position.txt", 1, 1)
 
         self.assertEqual(4, self.options.count['1'], 'one')
         self.assertEqual(4, self.options.count['4'], 'four')
