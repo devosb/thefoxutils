@@ -9,14 +9,14 @@ from thefoxUtils import unidump
 class UnidumpTests(unittest.TestCase):
 
     def setUp(self):
-        os.chdir('tests/data')
+        os.chdir('tests/data/unidump')
         ucd = unidump.read_nameslist("nameslist.lst")
         parser = unidump.cmdline()
         args = parser.parse_args(["position.txt"])
         self.options = unidump.Options(args, "dump", "utf_8", False, False, False, False, ucd)
 
     def tearDown(self):
-        os.chdir('../..')
+        os.chdir('../../..')
 
     # The two ignored tests pass on Ubuntu 9.04 with Python 2.6,
     # but fails on Windows XP with ActiveState Python 2.6.2.2.

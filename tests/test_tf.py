@@ -9,10 +9,10 @@ from thefoxUtils import tf
 class TextFileTests(unittest.TestCase):
 
     def setUp(self):
-        os.chdir('tests/data')
+        os.chdir('tests/data/tf')
 
     def tearDown(self):
-        os.chdir('../..')
+        os.chdir('../../..')
 
     # Line endings
 
