@@ -229,7 +229,7 @@ def cc2usv(cc):
 
 
 def codepoint2usv(codepoint):
-    """Convert a character to a string of the USV."""
+    """Convert a codepoint to a string of the USV."""
     return "%04X" % codepoint
 
 
