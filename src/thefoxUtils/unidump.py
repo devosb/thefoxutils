@@ -2,7 +2,8 @@
 
 import os
 import os.path
-import re
+import pickle
+import lzma
 import argparse
 
 
@@ -26,6 +27,8 @@ def cmdline():
                         type=int, default=1)
     parser.add_argument('--eol', help='read only to the end of the line',
                         action='store_true')
+    parser.add_argument('--ucd', help='update the Unicode character database',
+                        action='store_true')
     parser.add_argument('file', help='file to process', nargs='+')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + '(The Fox Utils) ' + '21.7')
@@ -35,14 +38,17 @@ def cmdline():
 def main():
     parser = cmdline()
     args = parser.parse_args()
+    ucdCacheFilename = os.path.join(os.environ["HOME"], ".unidump", "ucd.pickle.xz")
 
-    nameslist_file = os.path.join(os.environ["HOME"], ".unidump", "nameslist.lst")
-    ucd = read_nameslist(nameslist_file)
-    options = Options(args, 'na', args.encoding, args.octets, args.python, args.eol, args.debug, ucd)
-    if args.count:
-        countfiles(options, args.file, args.line, args.column)
+    if args.ucd:
+        update_ucd(args.file, ucdCacheFilename)
     else:
-        dumpfiles(options, args.file, args.line, args.column)
+        ucd = read_ucd(ucdCacheFilename)
+        options = Options(args, 'na', args.encoding, args.octets, args.python, args.eol, args.debug, ucd)
+        if args.count:
+            countfiles(options, args.file, args.line, args.column)
+        else:
+            dumpfiles(options, args.file, args.line, args.column)
 
 
 class Options(object):
@@ -51,78 +57,49 @@ class Options(object):
         self.args = args
         self.mode = mode
         self.encoding = encoding
-        # self.nameslistFile = nameslist_file
         self.show_octets = show_octets
         self.python_escape = python_escape
         self.stop = stop
         self.debug = debug
 
         self.ucd = ucd
-        # self.read_nameslist()
 
         self.count = dict()
 
 
-def read_nameslist(nameslistFile):
-    """Read data from customized nameslist file."""
+def update_ucd(unicodeDataFilenames, ucdCacheFilename):
+    """Update the Unicode Character Database (UCD) cache."""
 
-    ucd = {}
+    ucd = dict()
+    for unicodeDataFilename in unicodeDataFilenames:
+        with open(unicodeDataFilename) as unicodeDataFile:
+            for line in unicodeDataFile:
+                fields = line.split(';')
+                usv = fields[0]
+                name = fields[1]
+                alt_name = fields[10]
+                if name == '<control>':
+                    name = f'({alt_name})'
+                ucd[usv] = name
+                if name.startswith('<') and name.endswith('First>'):
+                    start = int(usv, 16)
+                    name_pattern = name.strip('<>')
+                    name_pattern = name_pattern.split(',')[0]
+                if name.startswith('<') and name.endswith('Last>'):
+                    stop = int(usv, 16)
+                    for codepoint in range(start, stop+1):
+                        usv = codepoint2usv(codepoint)
+                        name = f'{name_pattern}-{usv}'
+                        ucd[usv] = name
+    with lzma.open(ucdCacheFilename, 'wb') as ucdCacheFile:
+        pickle.dump(ucd, ucdCacheFile)
 
-    # Pre-populate ranges that are not in the nameslist file.
-    cjk_ranges = (
-        (0x4E00, 0x9FFC, ''),
-        (0x3400, 0x4DBF, 'A'),
-        (0x20000, 0x2A6DD, 'B'),
-        (0x2A700, 0x2B734, 'C'),
-        (0x2B740, 0x2B81D, 'D'),
-        (0x2B820, 0x2CEA1, 'E'),
-        (0x2CEB0, 0x2EBE0, 'F'),
-        (0x30000, 0x3134A, 'G')
-    )
-    for cjk_range in cjk_ranges:
-        start, end, label = cjk_range
 
-        for usvOrd in range(start, end + 1):
-            usv = codepoint2usv(usvOrd)
-            name = 'CJK Unified Ideograph'
-            if label != '':
-                name = ' '.join([name, 'Ext', label])
-            ucd[usv] = '{}-{}'.format(name, usv)
+def read_ucd(ucdCacheFile):
+    """Read data from the Unicode Character Database (UCD) cache."""
 
-    # Read nameslist file.
-    nameslist = open(nameslistFile, 'r')
-    re_usv_and_name = re.compile("([\dA-F]+)\t([\w\- <>]+)")
-    re_alt_name = re.compile("\t= ([\w\- \(\),]+)")
-    usv = ""
-    name = ""
-    for line in nameslist:
-        m = re_usv_and_name.match(line)
-        if m:
-            usv = m.group(1)
-            name = m.group(2)
-
-        if name == "<control>":
-            m = re_alt_name.match(line)
-            if m:
-                alt_name = m.group(1)
-                name = "(%s)" % alt_name
-
-        ucd[usv] = name
-    nameslist.close()
-
-    # Populate additional ranges that are not in the nameslist file.
-    for usvOrd in range(0xD800, 0xDB7F):
-        usv = codepoint2usv(usvOrd)
-        ucd[usv] = "(High Surrogate)"
-
-    for usvOrd in range(0xDB80, 0xDBFF):
-        usv = codepoint2usv(usvOrd)
-        ucd[usv] = "(High Private Use Surrogate)"
-
-    for usvOrd in range(0xDC00, 0xDFFF):
-        usv = codepoint2usv(usvOrd)
-        ucd[usv] = "(Low Surrogate)"
-
+    with lzma.open(ucdCacheFile, 'rb') as ucdCache:
+        ucd = pickle.load(ucdCache)
     return ucd
 
 

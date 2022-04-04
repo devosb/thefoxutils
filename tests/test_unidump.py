@@ -10,7 +10,7 @@ class UnidumpTests(unittest.TestCase):
 
     def setUp(self):
         os.chdir('tests/data/unidump')
-        ucd = unidump.read_nameslist("nameslist.lst")
+        ucd = unidump.read_ucd("ucd.pickle.xz")
         parser = unidump.cmdline()
         args = parser.parse_args(["position.txt"])
         self.options = unidump.Options(args, "dump", "utf_8", False, False, False, False, ucd)
@@ -105,28 +105,46 @@ class UnidumpTests(unittest.TestCase):
         self.assertEqual("LATIN SMALL LETTER N WITH TILDE", unidump.name_format(self.options, "\u00F1"))
 
     def test_nameChineseAlast(self):
-        self.assertEqual("CJK Unified Ideograph Ext A-4DBF", unidump.name_format(self.options, "\u4DBF"))
+        self.assertEqual("CJK Ideograph Extension A-4DBF", unidump.name_format(self.options, "\u4DBF"))
 
     def test_nameChineseURO(self):
-        self.assertEqual("CJK Unified Ideograph-6606", unidump.name_format(self.options, "\u6606"))
+        self.assertEqual("CJK Ideograph-6606", unidump.name_format(self.options, "\u6606"))
 
     def test_nameChineseUROlast(self):
-        self.assertEqual("CJK Unified Ideograph-9FFC", unidump.name_format(self.options, "\u9FFC"))
+        self.assertEqual("CJK Ideograph-9FFC", unidump.name_format(self.options, "\u9FFC"))
 
     def test_nameChineseB(self):
-        self.assertEqual("CJK Unified Ideograph Ext B-20040", unidump.name_format(self.options, "\U00020040"))
+        self.assertEqual("CJK Ideograph Extension B-20040", unidump.name_format(self.options, "\U00020040"))
 
     def test_nameChineseBlast(self):
-        self.assertEqual("CJK Unified Ideograph Ext B-2A6DD", unidump.name_format(self.options, "\U0002A6DD"))
+        self.assertEqual("CJK Ideograph Extension B-2A6DD", unidump.name_format(self.options, "\U0002A6DD"))
+
+    def test_nameChineseClast(self):
+        self.assertEqual("CJK Ideograph Extension C-2B734", unidump.name_format(self.options, "\U0002B734"))
+
+    def test_nameChineseDlast(self):
+        self.assertEqual("CJK Ideograph Extension D-2B81D", unidump.name_format(self.options, "\U0002B81D"))
 
     def test_nameChineseE(self):
-        self.assertEqual("CJK Unified Ideograph Ext E-2CA62", unidump.name_format(self.options, "\U0002CA62"))
+        self.assertEqual("CJK Ideograph Extension E-2CA62", unidump.name_format(self.options, "\U0002CA62"))
+
+    def test_nameChineseElast(self):
+        self.assertEqual("CJK Ideograph Extension E-2CEA1", unidump.name_format(self.options, "\U0002CEA1"))
+
+    def test_nameChineseFlast(self):
+        self.assertEqual("CJK Ideograph Extension F-2EBE0", unidump.name_format(self.options, "\U0002EBE0"))
 
     def test_nameChineseGlast(self):
-        self.assertEqual("CJK Unified Ideograph Ext G-3134A", unidump.name_format(self.options, "\U0003134A"))
+        self.assertEqual("CJK Ideograph Extension G-3134A", unidump.name_format(self.options, "\U0003134A"))
 
-    def test_namePUA(self):
+    def test_nameBranchPUA(self):
         self.assertEqual("BRANCH PUA-E000", unidump.name_format(self.options, "\uE000"))
+
+    def test_nameMicrosoftPUA(self):
+        self.assertEqual("MICROSOFT PUA-F000", unidump.name_format(self.options, "\uF000"))
+
+    def test_nameSilPUA(self):
+        self.assertEqual("SIL PUA-F130", unidump.name_format(self.options, "\uF130"))
 
     def test_nameBOM(self):
         self.assertEqual("ZERO WIDTH NO-BREAK SPACE", unidump.name_format(self.options, "\uFEFF"))
@@ -136,13 +154,13 @@ class UnidumpTests(unittest.TestCase):
 
     # Since the previous test fails, we need to be able to show names for surrogate pairs
     def test_nameHighSurrogate(self):
-        self.assertEqual("(High Surrogate)", unidump.name_format(self.options, "\uD800"))
+        self.assertEqual("Non Private Use High Surrogate-D800", unidump.name_format(self.options, "\uD800"))
 
     def test_nameHighPrivateUseSurrogate(self):
-        self.assertEqual("(High Private Use Surrogate)", unidump.name_format(self.options, "\uDB80"))
+        self.assertEqual("Private Use High Surrogate-DB80", unidump.name_format(self.options, "\uDB80"))
 
     def test_nameLowSurrogate(self):
-        self.assertEqual("(Low Surrogate)", unidump.name_format(self.options, "\uDC00"))
+        self.assertEqual("Low Surrogate-DC00", unidump.name_format(self.options, "\uDC00"))
 
     # octets
 
