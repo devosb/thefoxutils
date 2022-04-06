@@ -11,8 +11,10 @@ def cmdline():
     parser = argparse.ArgumentParser(description='Show USV values of characters in a file')
     parser.add_argument('--count', help='count characters instead of just listing them',
                         action='store_true')
-    parser.add_argument('--encoding', help='specify the encoding to display octets',
+    parser.add_argument('--encoding', help='file encoding',
                         default='utf-8')
+    parser.add_argument('--errors', help='error mode for encoding',
+                        default='strict')
     parser.add_argument('-o', '--octets', help='also display the bytes stored for each character',
                         action='store_true')
     parser.add_argument('-e', '--escape', help='output escaped text for use with FTML',
@@ -155,7 +157,7 @@ def countfile(options, input_filename, start_line, start_column):
 def readfile(options, input_filename, start_line, start_column):
     """Return each character in the file, or requested subset of the file."""
 
-    with open(input_filename, 'r', newline='') as input_file:
+    with open(input_filename, 'r', encoding=options.encoding, errors=options.args.errors, newline='') as input_file:
         lineno = 0
         columnno = 0
         for line in input_file:
