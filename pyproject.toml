@@ -1,6 +1,26 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
-]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "thefoxUtils"
+readme = "README.md"
+requires-python = ">= 3.7"
+license = {file = "LICENSE"}
+authors = [{name = "Bobby de Vos", email = "bobby_devos@sil.org"}]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    ]
+dynamic = ["version", "description"]
+
+[project.urls]
+"Homepage" = "https://github.com/devosb/thefoxutils"
+"Bug Tracker" = "https://github.com/devosb/thefoxutils/issues"
+
+[project.scripts]
+tf = "thefoxUtils.tf:main"
+unidump = "thefoxUtils.unidump:main"
+unikey = "thefoxUtils.unikey:main"
+unidata = "thefoxUtils.unidata:main"
