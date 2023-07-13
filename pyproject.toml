@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "thefoxUtils"
 readme = "README.md"
-requires-python = ">= 3.7"
+requires-python = ">= 3.8"
 license = {file = "LICENSE"}
 authors = [{name = "Bobby de Vos", email = "bobby_devos@sil.org"}]
 classifiers = [
@@ -16,7 +16,8 @@ classifiers = [
 dynamic = ["version", "description"]
 
 [project.urls]
-"Homepage" = "https://github.com/devosb/thefoxutils"
+"Homepage" = "https://github.com/devosb/thefoxutils/README.md"
+"Repository" = "https://github.com/devosb/thefoxutils"
 "Bug Tracker" = "https://github.com/devosb/thefoxutils/issues"
 
 [project.scripts]
@@ -24,3 +25,4 @@ tf = "thefoxUtils.tf:main"
 unidump = "thefoxUtils.unidump:main"
 unikey = "thefoxUtils.unikey:main"
 unidata = "thefoxUtils.unidata:main"
+glyphdata = "thefoxUtils.glyphdata:main"
