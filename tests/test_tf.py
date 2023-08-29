@@ -106,6 +106,14 @@ class TextFileTests(unittest.TestCase):
         text = u'\u0061\u0315\u0300\u05AE\u1ACC\u0062'
         self.assertEqual(u'\u0061\u05AE\u0300\u1ACC\u0315\u0062', tf.normalize('NFD', text))
 
+    def ignore_nfc_tus15(self):
+        text = u'\u0061\u0315\u0300\u05AE\u1E4EF\u0062'
+        self.assertEqual(u'\u00E0\u05AE\u1E4EF\u0315\u0062', tf.normalize('NFC', text))
+
+    def ignore_nfd_tus15(self):
+        text = u'\u0061\u0315\u0300\u05AE\u1E4EF\u0062'
+        self.assertEqual(u'\u0061\u05AE\u0300\u1E4EF\u0315\u0062', tf.normalize('NFD', text))
+
     # code still needs to be written for this
     def ignore_test_textMode(self):
         """Find occurrences of \r\r\n (that is CR CR LF) for a newline."""
