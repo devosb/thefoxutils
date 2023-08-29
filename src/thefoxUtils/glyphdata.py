@@ -1,23 +1,39 @@
 #!/usr/bin/python3
 
-import argparse
-import csv
 import xml.etree.ElementTree as ET
+from fontParts.world import *
+import csv
+import argparse
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Compare glyphnames')
-    parser.add_argument('codepoints', help='list of codepoints')
-    parser.add_argument('csv', help='CSV file of glyph names')
-    parser.add_argument('xml', help='GlyphData.xml from GlyphsApp')
+    parser = argparse.ArgumentParser(description='Compare glyph names')
+    parser.add_argument('test', help='Test item to compare to reference')
+    parser.add_argument('reference', help='Reference names to compare to')
+    parser.add_argument('-f', '--filter', help='Only report on codepoints in filter')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + '(The Fox Utils) ' + '23.6')
     args = parser.parse_args()
 
-    codepoint_data = read_codepoints(args.codepoints)
-    csv_data = read_csv(args.csv)
-    xml_name_data, xml_altname_data = read_xml(args.xml)
-    process(codepoint_data, csv_data, xml_name_data, xml_altname_data)
+    report_mode = False
+    test_data = reference_data = reference_alt_data = filter_data = None
+    if args.test.endswith('.csv'):
+        test_data = read_csv(args.test)
+    if args.test.endswith('.ufo'):
+        test_data = read_ufo(args.test)
+    if args.reference.endswith('.xml'):
+        reference_data, reference_alt_data = read_xml(args.reference)
+        report_mode = True
+    if args.reference.endswith('.csv'):
+        reference_data = read_csv(args.reference)
+    if args.filter:
+        if args.filter.endswith('.txt'):
+            filter_data = read_codepoints(args.filter)
+
+    if report_mode:
+        report(filter_data, test_data, reference_data, reference_alt_data)
+    else:
+        rename(filter_data, test_data, reference_data)
 
 
 def read_codepoints(filename):
@@ -49,6 +65,16 @@ def read_csv(filename):
     return data
 
 
+def read_ufo(filename):
+    data = dict()
+    font = OpenFont(filename)
+    for glyph in font:
+        if glyph.unicode:
+            glyph_name = glyph.name
+            data[glyph.unicode] = glyph_name
+    return data
+
+
 def read_xml(filename):
     name_data = dict()
     altname_data = dict()
@@ -66,11 +92,13 @@ def read_xml(filename):
     return name_data, altname_data
 
 
-def process(codepoint_data, csv_data, xml_name_data, xml_altname_data):
-    for codepoint in sorted(codepoint_data):
+def report(filter_data, csv_data, xml_name_data, xml_altname_data):
+    for codepoint in sorted(csv_data):
+        if filter_data and codepoint not in filter_data:
+            continue
         usv = f'{codepoint:04X}'
         csv_name = csv_data.get(codepoint, 'lost')
-        label = f'{usv}: {csv_name}'
+        label = f'{usv}: {csv_name} '
 
         xml_name = xml_name_data.get(codepoint, 'xml_lost')
         xml_altname = xml_altname_data.get(codepoint, 'xmlalt_lost')
@@ -78,10 +106,22 @@ def process(codepoint_data, csv_data, xml_name_data, xml_altname_data):
             label += 'name'
         else:
             if csv_name == xml_altname:
-                label += ' altname'
+                label += 'altname'
             else:
-                label += ' GlyphsApp ' + xml_name  # + ' ' + xml_altname
+                label += 'Glyphs.app ' + xml_name  # + ' ' + xml_altname
         print(label)
+
+
+def rename(filter_data, ufo_data, csv_data):
+    for codepoint in sorted(ufo_data):
+        if filter_data and codepoint not in filter_data:
+            continue
+        old_name = ufo_data.get(codepoint)
+        new_name = csv_data.get(codepoint)
+        if new_name == None:
+            continue
+        if old_name != new_name:
+            print(f'{old_name},{new_name}')
 
 
 if __name__ == '__main__':

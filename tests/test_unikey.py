@@ -13,4 +13,5 @@ def test_modify_extension():
 
 
 if __name__ == "__main__":
-    test_modify()
+    test_modify_standard()
+    test_modify_extension()
