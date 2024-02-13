@@ -12,7 +12,6 @@ args = parser.parse_args()
 def main():
     """Process UnicodeData.txt files."""
     spreadsheet = csv.writer(open('spreadsheet.csv', 'w'), quoting=csv.QUOTE_ALL)
-    pynameslist = open('pynameslist.txt', 'w')
     pyfontaine = open('pyfontaine.txt', 'w')
     quote = open('quote.txt', 'w')
 
@@ -24,7 +23,7 @@ def main():
             name = line[1]
 
             # create modified data
-            charset = '    0x{},  # {}\n'.format(usv, name)
+            charset = f'        0x{usv},  # {name}\n'
             decimal = int(usv, 16)
             # glyph = '  {0} '.format(chr(decimal))
             glyph = '  x '
@@ -32,9 +31,9 @@ def main():
 
             # output various formats
             spreadsheet.writerow([usv, decimal, glyph, name])
-            pynameslist.write(charset)
-            pyfontaine.write('    ' + charset)
+            pyfontaine.write(charset)
             quote.write(copy_paste)
+
 
 
 if __name__ == "__main__":
