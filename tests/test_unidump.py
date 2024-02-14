@@ -111,13 +111,13 @@ class UnidumpTests(unittest.TestCase):
         self.assertEqual("CJK Ideograph-6606", unidump.name_format(self.options, "\u6606"))
 
     def test_nameChineseUROlast(self):
-        self.assertEqual("CJK Ideograph-9FFC", unidump.name_format(self.options, "\u9FFC"))
+        self.assertEqual("CJK Ideograph-9FFF", unidump.name_format(self.options, "\u9FFF"))
 
     def test_nameChineseB(self):
         self.assertEqual("CJK Ideograph Extension B-20040", unidump.name_format(self.options, "\U00020040"))
 
     def test_nameChineseBlast(self):
-        self.assertEqual("CJK Ideograph Extension B-2A6DD", unidump.name_format(self.options, "\U0002A6DD"))
+        self.assertEqual("CJK Ideograph Extension B-2A6DF", unidump.name_format(self.options, "\U0002A6DF"))
 
     def test_nameChineseClast(self):
         self.assertEqual("CJK Ideograph Extension C-2B739", unidump.name_format(self.options, "\U0002B739"))
@@ -139,6 +139,9 @@ class UnidumpTests(unittest.TestCase):
 
     def test_nameChineseHlast(self):
         self.assertEqual("CJK Ideograph Extension H-323AF", unidump.name_format(self.options, "\U000323AF"))
+
+    def test_nameChineseIlast(self):
+        self.assertEqual("CJK Ideograph Extension I-2EE5D", unidump.name_format(self.options, "\U0002EE5D"))
 
     def test_nameBranchPUA(self):
         self.assertEqual("BRANCH PUA-E000", unidump.name_format(self.options, "\uE000"))
