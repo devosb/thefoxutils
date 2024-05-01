@@ -60,8 +60,9 @@ def read_csv(filename):
         reader = csv.reader(fh)
         for row in reader:
             codepoint = int(row[0], 16)
-            name = row[1]
-            data[codepoint] = name
+            aglname = row[1]
+            uniname = row[2]
+            data[codepoint] = (aglname, uniname)
     return data
 
 
@@ -97,8 +98,8 @@ def report(filter_data, csv_data, xml_name_data, xml_altname_data):
         if filter_data and codepoint not in filter_data:
             continue
         usv = f'{codepoint:04X}'
-        csv_name = csv_data.get(codepoint, 'lost')
-        label = f'{usv}: {csv_name} '
+        csv_name, uni_name = csv_data.get(codepoint, ('lost', 'LOST'))
+        label = f'{usv},{csv_name},{uni_name},Glyphs.app:'
 
         xml_name = xml_name_data.get(codepoint, 'xml_lost')
         xml_altname = xml_altname_data.get(codepoint, 'xmlalt_lost')
@@ -106,9 +107,9 @@ def report(filter_data, csv_data, xml_name_data, xml_altname_data):
             label += 'name'
         else:
             if csv_name == xml_altname:
-                label += 'altname'
+                label += 'altname:' + xml_altname
             else:
-                label += 'Glyphs.app ' + xml_name  # + ' ' + xml_altname
+                label += 'diff:' + xml_name
         print(label)
 
 
@@ -117,7 +118,7 @@ def rename(filter_data, ufo_data, csv_data):
         if filter_data and codepoint not in filter_data:
             continue
         old_name = ufo_data.get(codepoint)
-        new_name = csv_data.get(codepoint)
+        new_name, uni_name = csv_data.get(codepoint, (None, None))
         if new_name == None:
             continue
         if old_name != new_name:

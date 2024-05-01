@@ -3,3 +3,4 @@
 
 # Declare all files that are truly binary and should not be modified.
 *.rawtxt binary
+*.xz binary
