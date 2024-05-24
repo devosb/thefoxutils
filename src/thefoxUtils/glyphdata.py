@@ -94,9 +94,17 @@ def read_xml(filename):
 
 
 def report(filter_data, csv_data, xml_name_data, xml_altname_data):
+    if filter_data:
+        for filter in filter_data:
+            if filter not in csv_data:
+                print(f'missing filter {filter:04X}')
+
     for codepoint in sorted(csv_data):
         if filter_data and codepoint not in filter_data:
-            continue
+            if codepoint in (0x25CC,):
+                pass
+            else:
+                continue
         usv = f'{codepoint:04X}'
         csv_name, uni_name = csv_data.get(codepoint, ('lost', 'LOST'))
         label = f'{usv},{csv_name},{uni_name},Glyphs.app:'
@@ -111,6 +119,7 @@ def report(filter_data, csv_data, xml_name_data, xml_altname_data):
             else:
                 label += 'diff:' + xml_name
         print(label)
+        # print(f'{usv},{csv_name},{uni_name}')
 
 
 def rename(filter_data, ufo_data, csv_data):

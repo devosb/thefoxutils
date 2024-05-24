@@ -32,7 +32,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
-          pytest
+          python -m pytest
       - name: Test with tox
         # Run tox using the version of Python in `PATH`
         run: tox -e py

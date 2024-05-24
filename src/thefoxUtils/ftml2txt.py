@@ -157,7 +157,7 @@ class TestGroup:
         text = '# ' + self.data + '\n'
         for test in self.tests:
             text += test.text()
-        for char in r'\#$':  # \#$%&()^_~
+        for char in r'\#$&_':  # \#$%&()^_~
             text = text.replace(char, '\\' + char)
         return text
 
