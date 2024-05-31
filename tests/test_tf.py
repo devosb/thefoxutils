@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import sys
 import unittest
 
 from thefoxUtils import tf
@@ -10,6 +11,7 @@ class TextFileTests(unittest.TestCase):
 
     def setUp(self):
         os.chdir('tests/data/tf')
+        self.version = sys.version_info
 
     def tearDown(self):
         os.chdir('../../..')
@@ -67,50 +69,74 @@ class TextFileTests(unittest.TestCase):
         self.assertEqual(u'e\u0301', tf.normalize('NFD', text))
 
     def test_nfc_tus10(self):
+        if self.version.minor < 7:
+            return
         text = u'\u0061\u035C\u0315\u0300\u1DF6\u0062'
         self.assertEqual(u'\u00E0\u0315\u1DF6\u035C\u0062', tf.normalize('NFC', text))
 
     def test_nfd_tus10(self):
+        if self.version.minor < 7:
+            return
         text = u'\u0061\u035C\u0315\u0300\u1DF6\u0062'
         self.assertEqual(u'\u0061\u0300\u0315\u1DF6\u035C\u0062', tf.normalize('NFD', text))
 
     def test_nfc_tus11(self):
+        if self.version.minor < 7:
+            return
         text = u'\u0061\u0315\u0300\u05AE\u09FE\u0062'
         self.assertEqual(u'\u00E0\u05AE\u09FE\u0315\u0062', tf.normalize('NFC', text))
 
     def test_nfd_tus11(self):
+        if self.version.minor < 7:
+            return
         text = u'\u0061\u0315\u0300\u05AE\u09FE\u0062'
         self.assertEqual(u'\u0061\u05AE\u0300\u09FE\u0315\u0062', tf.normalize('NFD', text))
 
     def test_nfc_tus12(self):
+        if self.version.minor < 8:
+            return
         text = u'\u0061\u0315\u0300\u05AE\U0001E136\u0062'
         self.assertEqual(u'\u00E0\u05AE\U0001E136\u0315\u0062', tf.normalize('NFC', text))
 
     def test_nfd_tus12(self):
+        if self.version.minor < 8:
+            return
         text = u'\u0061\u0315\u0300\u05AE\U0001E136\u0062'
         self.assertEqual(u'\u0061\u05AE\u0300\U0001E136\u0315\u0062', tf.normalize('NFD', text))
 
     def test_nfc_tus13(self):
+        if self.version.minor < 9:
+            return
         text = u'\u0061\u3099\u093C\U00016FF0\u09BC\u0062'
         self.assertEqual(u'\u0061\U00016FF0\u093C\u09BC\u3099\u0062', tf.normalize('NFC', text))
 
     def test_nfd_tus13(self):
+        if self.version.minor < 9:
+            return
         text = u'\u0061\u3099\u093C\U00016FF0\u09BC\u0062'
         self.assertEqual(u'\u0061\U00016FF0\u093C\u09BC\u3099\u0062', tf.normalize('NFD', text))
 
-    def ignore_nfc_tus14(self):
+    def tests_nfc_tus14(self):
+        if self.version.minor < 11:
+            return
         text = u'\u0061\u0315\u0300\u05AE\u1ACC\u0062'
         self.assertEqual(u'\u00E0\u05AE\u1ACC\u0315\u0062', tf.normalize('NFC', text))
 
-    def ignore_nfd_tus14(self):
+    def tests_nfd_tus14(self):
+        if self.version.minor < 11:
+            return
         text = u'\u0061\u0315\u0300\u05AE\u1ACC\u0062'
         self.assertEqual(u'\u0061\u05AE\u0300\u1ACC\u0315\u0062', tf.normalize('NFD', text))
 
-    def ignore_nfc_tus15(self):
+    def tests_nfc_tus15(self):
+        if self.version.minor < 12:
+            return
         text = u'\u0061\u0315\u0300\u05AE\u1E4EF\u0062'
         self.assertEqual(u'\u00E0\u05AE\u1E4EF\u0315\u0062', tf.normalize('NFC', text))
 
-    def ignore_nfd_tus15(self):
+    def tests_nfd_tus15(self):
+        if self.version.minor < 12:
+            return
         text = u'\u0061\u0315\u0300\u05AE\u1E4EF\u0062'
         self.assertEqual(u'\u0061\u05AE\u0300\u1E4EF\u0315\u0062', tf.normalize('NFD', text))
 
