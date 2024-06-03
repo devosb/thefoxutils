@@ -131,14 +131,14 @@ class TextFileTests(unittest.TestCase):
     def tests_nfc_tus15(self):
         if self.version.minor < 12:
             return
-        text = u'\u0061\u0315\u0300\u05AE\u1E4EF\u0062'
-        self.assertEqual(u'\u00E0\u05AE\u1E4EF\u0315\u0062', tf.normalize('NFC', text))
+        text = u'\u0061\u0315\u0300\u05AE\U0001E4EF\u0062'
+        self.assertEqual(u'\u00E0\u05AE\U0001E4EF\u0315\u0062', tf.normalize('NFC', text))
 
     def tests_nfd_tus15(self):
         if self.version.minor < 12:
             return
-        text = u'\u0061\u0315\u0300\u05AE\u1E4EF\u0062'
-        self.assertEqual(u'\u0061\u05AE\u0300\u1E4EF\u0315\u0062', tf.normalize('NFD', text))
+        text = u'\u0061\u0315\u0300\u05AE\U0001E4EF\u0062'
+        self.assertEqual(u'\u0061\u05AE\u0300\U0001E4EF\u0315\u0062', tf.normalize('NFD', text))
 
     # code still needs to be written for this
     def ignore_test_textMode(self):
