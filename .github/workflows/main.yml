@@ -45,10 +45,10 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest cmd
         run: |
-          pytest
+          PYTHONUTF8=1 pytest
       - name: Test with pytest module
         run: |
-          python -m pytest
+          PYTHONUTF8=1 python -m pytest
       - name: Test with tox
         # Run tox using the version of Python in `PATH`
-        run: tox -e py
+        run: PYTHONUTF8=1 tox -e py
