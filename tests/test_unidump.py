@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import os.path
 import unittest
 
 from thefoxUtils import unidump
@@ -12,7 +13,7 @@ class UnidumpTests(unittest.TestCase):
         os.chdir('tests/data/unidump')
         ucd = unidump.read_ucd("ucd.pickle.xz")
         parser = unidump.cmdline()
-        args = parser.parse_args(["position.txt"])
+        args = parser.parse_args(["/dev/null"])
         self.options = unidump.Options(args, "dump", "utf_8", False, False, False, False, ucd)
 
     def tearDown(self):
@@ -33,6 +34,14 @@ class UnidumpTests(unittest.TestCase):
 
     def test_posLineColumn(self):
         self.assertEqual("U+0034 DIGIT FOUR", next(unidump.dumpfile(self.options, "position.txt", 4, 6)))
+
+    def test_posNFC(self):
+        self.assertEqual("U+00E9 LATIN SMALL LETTER E WITH ACUTE",
+                         next(unidump.dumpfile(self.options, os.path.join("..", "tf", "nf-none.txt"), 1, 2)))
+
+    def test_posNFD(self):
+        self.assertEqual("U+0301 COMBINING ACUTE ACCENT",
+                         next(unidump.dumpfile(self.options, os.path.join("..", "tf", "nf-none.txt"), 1, 7)))
 
     # count
 

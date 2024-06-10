@@ -12,7 +12,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.9", "pypy3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.9", "pypy3.10", "graalpy-24.0"]
+        exclude:
+          - os: windows-latest
+            python-version: graalpy-24.0
         include:
           - os: ubuntu-latest
             python-version: 3.13
@@ -45,10 +48,10 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest cmd
         run: |
-          PYTHONUTF8=1 pytest
+          pytest
       - name: Test with pytest module
         run: |
-          PYTHONUTF8=1 python -m pytest
+          python -m pytest
       - name: Test with tox
         # Run tox using the version of Python in `PATH`
-        run: PYTHONUTF8=1 tox -e py
+        run: tox -e py
