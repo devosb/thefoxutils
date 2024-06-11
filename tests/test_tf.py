@@ -44,21 +44,31 @@ class TextFileTests(unittest.TestCase):
 
     # Normalization forms
 
+    def helper_nf(self, expected):
+        if sys.platform.startswith('win'):
+            dos = 'nl: dos'
+            if expected == '':
+                return dos
+            else:
+                return  dos + ' ' + expected
+        else:
+            return expected
+
     def test_nf_c(self):
         filename = 'nf-c.txt'
-        self.assertEqual('nf: c', tf.process_file(None, None, None, filename))
+        self.assertEqual(self.helper_nf('nf: c'), tf.process_file(None, None, None, filename))
 
     def test_nf_d(self):
         filename = 'nf-d.txt'
-        self.assertEqual('nf: d', tf.process_file(None, None, None, filename))
+        self.assertEqual(self.helper_nf('nf: d'), tf.process_file(None, None, None, filename))
 
     def test_nf_both(self):
         filename = 'nf-both.txt'
-        self.assertEqual('', tf.process_file(None, None, None, filename))
+        self.assertEqual(self.helper_nf(''), tf.process_file(None, None, None, filename))
 
     def test_nf_none(self):
         filename = 'nf-none.txt'
-        self.assertEqual('nf:', tf.process_file(None, None, None, filename))
+        self.assertEqual(self.helper_nf('nf:'), tf.process_file(None, None, None, filename))
 
     def test_nfc_tus1(self):
         text = u'e\u0301'
