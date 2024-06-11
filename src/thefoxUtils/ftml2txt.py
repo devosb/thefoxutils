@@ -32,13 +32,13 @@ def main():
 
         # Write plain text file
         text_filename = f'{dev}/txt/{base_filename}.txt'
-        with open(text_filename, 'w') as text_file:
+        with open(text_filename, 'w', encoding='utf-8') as text_file:
             text = ftml_data.text()
             text_file.write(text)
 
         # Write HTML file
         html_filename = f'{dev}/web/{base_filename}.html'
-        with open(html_filename, 'w') as html_file:
+        with open(html_filename, 'w', encoding='utf-8') as html_file:
             html = ftml_data.html()
             html_file.write(html)
 
@@ -48,7 +48,7 @@ def main():
         # Write SFM file
         book_filename = book_filenames.pop(0)
         sfm_filename = f'{dev}/sfm/{book_filename}'
-        with open(sfm_filename, 'w', newline='\r\n') as sfm_file:
+        with open(sfm_filename, 'w', encoding='utf-8', newline='\r\n') as sfm_file:
             sfm = ftml_data.sfm(base_filename, book_filename)
             sfm_file.write(sfm)
 

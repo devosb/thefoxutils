@@ -43,7 +43,7 @@ def find_words(test_dir):
     test_words = []
     text_files = glob.glob('**/*.*txt', root_dir=test_dir, recursive=True)
     for text_file in text_files:
-        with open(os.path.join(test_dir, text_file)) as text:
+        with open(os.path.join(test_dir, text_file), encoding='utf-8') as text:
             line_num = 0
             for line in text:
                 words = line.split()

@@ -54,12 +54,12 @@ def process_files(args):
 
 
 def process_file(requested_eol, normalization, whitespace, input_filename):
-    input_file = open(input_filename, 'r', newline='')
+    input_file = open(input_filename, 'r', encoding='utf-8', newline='')
 
     if requested_eol or whitespace or normalization:
         # TODO use module tempfile
         temp_filename = input_filename + '.temp'
-        temp = open(temp_filename, 'w')
+        temp = open(temp_filename, 'w', encoding='utf-8')
 
     # run through all the lines in the file
     newlines = set()
