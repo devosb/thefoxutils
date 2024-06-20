@@ -117,7 +117,7 @@ class FTML:
     def sfm(self, ftml_name, book_filename):
         book_code = book_filename[2:5]
         """Format data for a SFM file"""
-        sfm = f"""\\id {book_code}
+        sfm = fr"""\id {book_code}
 \ide UTF-8
 \rem {ftml_name}
 \h {book_code}
@@ -128,7 +128,7 @@ class FTML:
 \p
 \v 1 \vp ???\vp* ?????????????????
 """
-        sfm = f"""\\id {book_code}
+        sfm = fr"""\id {book_code}
 \mt {ftml_name}
 """
         chapter = 0
