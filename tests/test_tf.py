@@ -50,7 +50,7 @@ class TextFileTests(unittest.TestCase):
             if expected == '':
                 return dos
             else:
-                return  dos + ' ' + expected
+                return dos + ' ' + expected
         else:
             return expected
 

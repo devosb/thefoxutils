@@ -189,7 +189,7 @@ class Test:
 
     def text(self):
         """Format data for a plain text file"""
-        return(self.label + ': ' + self.comment + ' ' + self.data + '\n')
+        return self.label + ': ' + self.comment + ' ' + self.data + '\n'
 
     def html(self):
         """Format data for a HTML file"""
@@ -202,7 +202,7 @@ class Test:
         """Format data for a SFM file"""
         sfm = self.label + ': ' + self.comment + ' ' + self.data + '\n'
         sfm = sfm.replace('\u005C', '')
-        return(sfm)
+        return sfm
 
 
 if __name__ == "__main__":

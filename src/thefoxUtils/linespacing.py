@@ -88,8 +88,8 @@ def find_extrema(test_words, font_filenames):
                 glyph.draw(bp)
                 (xmin, ymin, xmax, ymax) = bp.bounds
                 y_offset = position.y_offset
-                low = ymin+y_offset
-                high = ymax+y_offset
+                low = ymin + y_offset
+                high = ymax + y_offset
                 if low < lowest:
                     lowest = low
                     lowest_extremas = []

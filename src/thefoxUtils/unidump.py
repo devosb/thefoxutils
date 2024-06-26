@@ -89,7 +89,7 @@ def update_ucd(unicodeDataFilenames, ucdCacheFilename):
                     name_pattern = name_pattern.split(',')[0]
                 if name.startswith('<') and name.endswith('Last>'):
                     stop = int(usv, 16)
-                    for codepoint in range(start, stop+1):
+                    for codepoint in range(start, stop + 1):
                         usv = codepoint2usv(codepoint)
                         name = f'{name_pattern}-{usv}'
                         ucd[usv] = name

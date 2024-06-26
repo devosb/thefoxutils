@@ -35,6 +35,5 @@ def main():
             quote.write(copy_paste)
 
 
-
 if __name__ == "__main__":
     main()

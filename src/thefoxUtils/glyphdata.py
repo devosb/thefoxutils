@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import xml.etree.ElementTree as ET
-from fontParts.world import *
+import fontParts.world as fontparts
 import csv
 import argparse
 
@@ -68,7 +68,7 @@ def read_csv(filename):
 
 def read_ufo(filename):
     data = dict()
-    font = OpenFont(filename)
+    font = fontparts.OpenFont(filename)
     for glyph in font:
         if glyph.unicode:
             glyph_name = glyph.name
@@ -128,7 +128,7 @@ def rename(filter_data, ufo_data, csv_data):
             continue
         old_name = ufo_data.get(codepoint)
         new_name, uni_name = csv_data.get(codepoint, (None, None))
-        if new_name == None:
+        if new_name is None:
             continue
         if old_name != new_name:
             print(f'{old_name},{new_name}')
