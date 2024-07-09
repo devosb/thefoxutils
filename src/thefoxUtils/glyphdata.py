@@ -37,6 +37,10 @@ def main():
             print(line)
 
 
+def codepoint2usv(codepoint):
+    return f'{codepoint:06X}'
+
+
 def read_codepoints(filename):
     data = list()
     with open(filename) as fh:
@@ -51,7 +55,8 @@ def read_codepoints(filename):
 
             # Convert data
             codepoint = int(line, 16)
-            data.append(codepoint)
+            usv = codepoint2usv(codepoint)
+            data.append(usv)
     return data
 
 
@@ -61,19 +66,29 @@ def read_csv(filename):
         reader = csv.reader(fh)
         for row in reader:
             codepoint = int(row[0], 16)
+            usv = codepoint2usv(codepoint)
             aglname = row[1]
             uniname = row[2]
-            data[codepoint] = (aglname, uniname)
+            data[usv] = (aglname, uniname)
     return data
 
 
 def read_ufo(filename):
     data = dict()
+    rev_cmap = dict()
     font = fontparts.OpenFont(filename)
     for glyph in font:
         if glyph.unicode:
-            glyph_name = glyph.name
-            data[glyph.unicode] = (glyph_name, 'UNI NAME')
+            base_glyph_name, dot, suffix = glyph.name.partition('.')
+            usv = codepoint2usv(glyph.unicode)
+            rev_cmap[f'{base_glyph_name}'] = usv
+    for glyph in font:
+        base_glyph_name, dot, suffix = glyph.name.partition('.')
+        if base_glyph_name in rev_cmap:
+            usv = rev_cmap[base_glyph_name]
+            data[f'{glyph.name}'] = (glyph.name, 'UNI NAME', usv)
+        else:
+            data[f'{glyph.name}'] = (glyph.name, 'UNI NAME', '')
     return data
 
 
@@ -85,13 +100,14 @@ def read_xml(filename):
     for char in root:
         if 'unicode' in char.attrib:
             codepoint = int(char.attrib['unicode'], 16)
+            usv = codepoint2usv(codepoint)
             name = char.attrib['name']
             uniname = char.attrib['description']
-            name_data[codepoint] = (name, uniname)
+            name_data[usv] = (name, uniname, usv)
 
             if 'altNames' in char.attrib:
                 altname = char.attrib['altNames']
-                altname_data[codepoint] = (altname, uniname)
+                altname_data[usv] = (altname, uniname, usv)
     return name_data, altname_data
 
 
@@ -103,16 +119,17 @@ def report(filter_data, csv_data, xml_name_data, xml_altname_data):
 
     for codepoint in sorted(csv_data):
         if filter_data and codepoint not in filter_data:
-            if codepoint in (0x25CC,):
+            if codepoint in ('0025CC',):
                 pass
             else:
                 continue
-        usv = f'{codepoint:04X}'
-        csv_name, uni_name = csv_data.get(codepoint, ('lost', 'LOST'))
+        # usv = f'{codepoint:04X}'
+        usv = codepoint
+        csv_name, uni_name = csv_data.get(codepoint, ('lost', 'LOST', ''))
         label = f'{usv},{csv_name},{uni_name},Glyphs.app:'
 
-        xml_name, uni_name = xml_name_data.get(codepoint, ('xml_lost', 'XML LOST'))
-        xml_altname, uni_name = xml_altname_data.get(codepoint, ('xmlalt_lost', 'XML ALT LOST'))
+        xml_name, uni_name, usv = xml_name_data.get(codepoint, ('xml_lost', 'XML LOST', ''))
+        xml_altname, uni_name, usv = xml_altname_data.get(codepoint, ('xmlalt_lost', 'XML ALT LOST', ''))
         if csv_name == xml_name:
             label += 'name'
         else:
@@ -129,10 +146,12 @@ def rename(filter_data, ufo_data, csv_data):
     for codepoint in sorted(ufo_data):
         if filter_data and codepoint not in filter_data:
             continue
-        old_name, uni_name = ufo_data.get(codepoint)
-        new_name, uni_name = csv_data.get(codepoint, (None, None))
+        old_name, uni_name, usv = ufo_data.get(codepoint, (None, None, ''))
+        old_base_name, dot, suffix = old_name.partition('.')
+        new_name, uni_name, usv = csv_data.get(usv, (None, None, ''))
         if new_name is None:
             continue
+        new_name = f'{new_name}{dot}{suffix}'
         if old_name != new_name:
             output.append(f'{old_name},{new_name}')
     return output
