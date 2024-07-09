@@ -33,7 +33,9 @@ def main():
     if report_mode:
         report(filter_data, test_data, reference_data, reference_alt_data)
     else:
-        rename(filter_data, test_data, reference_data)
+        output = rename(filter_data, test_data, reference_data)
+        for line in output:
+            print(line)
 
 
 def read_codepoints(filename):
@@ -123,6 +125,7 @@ def report(filter_data, csv_data, xml_name_data, xml_altname_data):
 
 
 def rename(filter_data, ufo_data, csv_data):
+    output = []
     for codepoint in sorted(ufo_data):
         if filter_data and codepoint not in filter_data:
             continue
@@ -131,7 +134,8 @@ def rename(filter_data, ufo_data, csv_data):
         if new_name is None:
             continue
         if old_name != new_name:
-            print(f'{old_name},{new_name}')
+            output.append(f'{old_name},{new_name}')
+    return output
 
 
 if __name__ == '__main__':
