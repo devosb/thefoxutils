@@ -6,6 +6,7 @@ from pathlib import Path
 
 from thefoxUtils import glyphdata
 
+
 class UnikeyTests(unittest.TestCase):
 
     def setUp(self):
