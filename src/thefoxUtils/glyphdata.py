@@ -137,7 +137,7 @@ def report(filter_data, csv_data, xml_name_data, xml_altname_data):
         # print(f'{usv},{csv_name},{uni_name}')
 
 
-def rename(filter_data, ufo_data, csv_data):
+def rename(filter_data, ufo_data, ref_data):
     output = []
     for data in sorted(ufo_data.values()):
         codepoint = data[0]
@@ -145,12 +145,12 @@ def rename(filter_data, ufo_data, csv_data):
         if filter_data and codepoint not in filter_data:
             continue
         old_base_name, dot, suffix = old_name.partition('.')
-        csv_codepoint, new_name, uni_name = csv_data.get(codepoint, (-1, 'csv_lost', 'CSV LOST'))
-        if new_name == 'csv_lost':
-            continue
+        csv_codepoint, new_name, uni_name = ref_data.get(codepoint, (-1, 'ref_lost', 'REF LOST'))
+        # if new_name == 'ref_lost':
+        #     continue
         new_name = f'{new_name}{dot}{suffix}'
         if old_name != new_name:
-            output.append(f'{old_name},{new_name}')
+            output.append(f'{codepoint:04X},{uni_name},{old_name},{new_name}')
     return output
 
 

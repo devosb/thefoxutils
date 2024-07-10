@@ -33,6 +33,7 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.9", "pypy3.10", "graalpy-24.0"]
@@ -56,7 +57,7 @@ jobs:
           allow-prereleases: true
       - name: Display versions
         run: |
-          python -c "import sys; print(sys.version); print(sys.platform)"
+          python -c "import sys; print(sys.version); print(sys.platform); print(sys.prefix)"
           python -c "import os; print(os.name)"
           python -c "import platform; print(platform.system())"
           python -c "import unicodedata; print(unicodedata.unidata_version)"

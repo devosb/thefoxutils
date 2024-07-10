@@ -1,111 +1,114 @@
-Space,space
-ExclamationMrk,exclam
-QuotMrk,quotedbl
-NumSgn,numbersign
-DollarSgn,dollar
-PercentSgn,percent
-Ampersand,ampersand
-Apos,quotesingle
-LftParen,parenleft
-RtParen,parenright
-Asterisk,asterisk
-PlusSgn,plus
-Comma,comma
-HyphenMinus,hyphen
-FullStop,period
-Solidus,slash
-DigitZero,zero
-DigitOne,one
-DigitTwo,two
-DigitThree,three
-DigitFour,four
-DigitFive,five
-DigitSix,six
-DigitSeven,seven
-DigitEight,eight
-DigitNine,nine
-Colon,colon
-Semicolon,semicolon
-LTSgn,less
-EqSgn,equal
-GTSgn,greater
-QstnMrk,question
-AtSgn,at
-LtnCapA,A
-LtnCapA.alt,A.alt
-LtnCapB,B
-LtnCapC,C
-LtnCapD,D
-LtnCapE,E
-LtnCapF,F
-LtnCapG,G
-LtnCapH,H
-LtnCapI,I
-LtnCapJ,J
-LtnCapK,K
-LtnCapL,L
-LtnCapM,M
-LtnCapN,N
-LtnCapO,O
-LtnCapP,P
-LtnCapQ,Q
-LtnCapR,R
-LtnCapS,S
-LtnCapT,T
-LtnCapU,U
-LtnCapV,V
-LtnCapW,W
-LtnCapX,X
-LtnCapY,Y
-LftSqrBrac,bracketleft
-ReverseSolidus,backslash
-RtSqrBrac,bracketright
-CircumAccent,asciicircum
-LowLine,underscore
-GraveAccent,grave
-LtnSmA,a
-LtnSmB,b
-LtnSmC,c
-LtnSmD,d
-LtnSmE,e
-LtnSmF,f
-LtnSmG,g
-LtnSmH,h
-LtnSmI,i
-LtnSmJ,j
-LtnSmK,k
-LtnSmL,l
-LtnSmM,m
-LtnSmN,n
-LtnSmO,o
-LtnSmP,p
-LtnSmQ,q
-LtnSmR,r
-LtnSmS,s
-LtnSmT,t
-LtnSmU,u
-LtnSmV,v
-LtnSmW,w
-LtnSmX,x
-LtnSmY,y
-LftCurlyBrac,braceleft
-VertLine,bar
-RtCurlyBrac,braceright
-Tilde,asciitilde
-Hyphen_Soft,softhyphen
-LtnCapADiaer,Adieresis
-LtnSmAGrave,agrave
-LtnSmAAcute,aacute
-LtnSmACircum,acircumflex
-LtnSmATilde,atilde
-LtnSmADiaer,adieresis
-LtnSmARingAbv,aring
-CombGrave,gravecomb
-CombAcute,acutecomb
-CombCircum,circumflexcomb
-CombTilde,tildecomb
-CombDiaer,dieresiscomb
-CombRingAbv,ringcomb
-Hyphen,hyphentwo
-NonBreakingHyphen,nonbreakinghyphen
-DottedCirc,dottedCircle
+-001,REF LOST,.notdef,ref_lost.notdef
+-001,REF LOST,.null,ref_lost.null
+-001,REF LOST,nonmarkingreturn,ref_lost
+0020,SPACE,Space,space
+0021,EXCLAMATION MARK,ExclamationMrk,exclam
+0022,QUOTATION MARK,QuotMrk,quotedbl
+0023,NUMBER SIGN,NumSgn,numbersign
+0024,DOLLAR SIGN,DollarSgn,dollar
+0025,PERCENT SIGN,PercentSgn,percent
+0026,AMPERSAND,Ampersand,ampersand
+0027,APOSTROPHE,Apos,quotesingle
+0028,LEFT PARENTHESIS,LftParen,parenleft
+0029,RIGHT PARENTHESIS,RtParen,parenright
+002A,ASTERISK,Asterisk,asterisk
+002B,PLUS SIGN,PlusSgn,plus
+002C,COMMA,Comma,comma
+002D,HYPHEN-MINUS,HyphenMinus,hyphen
+002E,FULL STOP,FullStop,period
+002F,SOLIDUS,Solidus,slash
+0030,DIGIT ZERO,DigitZero,zero
+0031,DIGIT ONE,DigitOne,one
+0032,DIGIT TWO,DigitTwo,two
+0033,DIGIT THREE,DigitThree,three
+0034,DIGIT FOUR,DigitFour,four
+0035,DIGIT FIVE,DigitFive,five
+0036,DIGIT SIX,DigitSix,six
+0037,DIGIT SEVEN,DigitSeven,seven
+0038,DIGIT EIGHT,DigitEight,eight
+0039,DIGIT NINE,DigitNine,nine
+003A,COLON,Colon,colon
+003B,SEMICOLON,Semicolon,semicolon
+003C,LESS-THAN SIGN,LTSgn,less
+003D,EQUALS SIGN,EqSgn,equal
+003E,GREATER-THAN SIGN,GTSgn,greater
+003F,QUESTION MARK,QstnMrk,question
+0040,COMMERCIAL AT,AtSgn,at
+0041,LATIN CAPITAL LETTER A,LtnCapA,A
+0041,LATIN CAPITAL LETTER A,LtnCapA.alt,A.alt
+0042,LATIN CAPITAL LETTER B,LtnCapB,B
+0043,LATIN CAPITAL LETTER C,LtnCapC,C
+0044,LATIN CAPITAL LETTER D,LtnCapD,D
+0045,LATIN CAPITAL LETTER E,LtnCapE,E
+0046,LATIN CAPITAL LETTER F,LtnCapF,F
+0047,LATIN CAPITAL LETTER G,LtnCapG,G
+0048,LATIN CAPITAL LETTER H,LtnCapH,H
+0049,LATIN CAPITAL LETTER I,LtnCapI,I
+004A,LATIN CAPITAL LETTER J,LtnCapJ,J
+004B,LATIN CAPITAL LETTER K,LtnCapK,K
+004C,LATIN CAPITAL LETTER L,LtnCapL,L
+004D,LATIN CAPITAL LETTER M,LtnCapM,M
+004E,LATIN CAPITAL LETTER N,LtnCapN,N
+004F,LATIN CAPITAL LETTER O,LtnCapO,O
+0050,LATIN CAPITAL LETTER P,LtnCapP,P
+0051,LATIN CAPITAL LETTER Q,LtnCapQ,Q
+0052,LATIN CAPITAL LETTER R,LtnCapR,R
+0053,LATIN CAPITAL LETTER S,LtnCapS,S
+0054,LATIN CAPITAL LETTER T,LtnCapT,T
+0055,LATIN CAPITAL LETTER U,LtnCapU,U
+0056,LATIN CAPITAL LETTER V,LtnCapV,V
+0057,LATIN CAPITAL LETTER W,LtnCapW,W
+0058,LATIN CAPITAL LETTER X,LtnCapX,X
+0059,LATIN CAPITAL LETTER Y,LtnCapY,Y
+005B,LEFT SQUARE BRACKET,LftSqrBrac,bracketleft
+005C,REVERSE SOLIDUS,ReverseSolidus,backslash
+005D,RIGHT SQUARE BRACKET,RtSqrBrac,bracketright
+005E,CIRCUMFLEX ACCENT,CircumAccent,asciicircum
+005F,LOW LINE,LowLine,underscore
+0060,GRAVE ACCENT,GraveAccent,grave
+0061,LATIN SMALL LETTER A,LtnSmA,a
+0062,LATIN SMALL LETTER B,LtnSmB,b
+0063,LATIN SMALL LETTER C,LtnSmC,c
+0064,LATIN SMALL LETTER D,LtnSmD,d
+0065,LATIN SMALL LETTER E,LtnSmE,e
+0066,LATIN SMALL LETTER F,LtnSmF,f
+0067,LATIN SMALL LETTER G,LtnSmG,g
+0068,LATIN SMALL LETTER H,LtnSmH,h
+0069,LATIN SMALL LETTER I,LtnSmI,i
+006A,LATIN SMALL LETTER J,LtnSmJ,j
+006B,LATIN SMALL LETTER K,LtnSmK,k
+006C,LATIN SMALL LETTER L,LtnSmL,l
+006D,LATIN SMALL LETTER M,LtnSmM,m
+006E,LATIN SMALL LETTER N,LtnSmN,n
+006F,LATIN SMALL LETTER O,LtnSmO,o
+0070,LATIN SMALL LETTER P,LtnSmP,p
+0071,LATIN SMALL LETTER Q,LtnSmQ,q
+0072,LATIN SMALL LETTER R,LtnSmR,r
+0073,LATIN SMALL LETTER S,LtnSmS,s
+0074,LATIN SMALL LETTER T,LtnSmT,t
+0075,LATIN SMALL LETTER U,LtnSmU,u
+0076,LATIN SMALL LETTER V,LtnSmV,v
+0077,LATIN SMALL LETTER W,LtnSmW,w
+0078,LATIN SMALL LETTER X,LtnSmX,x
+0079,LATIN SMALL LETTER Y,LtnSmY,y
+007B,LEFT CURLY BRACKET,LftCurlyBrac,braceleft
+007C,VERTICAL LINE,VertLine,bar
+007D,RIGHT CURLY BRACKET,RtCurlyBrac,braceright
+007E,TILDE,Tilde,asciitilde
+00AD,SOFT HYPHEN,Hyphen_Soft,softhyphen
+00C4,LATIN CAPITAL LETTER A WITH DIAERESIS,LtnCapADiaer,Adieresis
+00E0,LATIN SMALL LETTER A WITH GRAVE,LtnSmAGrave,agrave
+00E1,LATIN SMALL LETTER A WITH ACUTE,LtnSmAAcute,aacute
+00E2,LATIN SMALL LETTER A WITH CIRCUMFLEX,LtnSmACircum,acircumflex
+00E3,LATIN SMALL LETTER A WITH TILDE,LtnSmATilde,atilde
+00E4,LATIN SMALL LETTER A WITH DIAERESIS,LtnSmADiaer,adieresis
+00E5,LATIN SMALL LETTER A WITH RING ABOVE,LtnSmARingAbv,aring
+0300,COMBINING GRAVE ACCENT,CombGrave,gravecomb
+0301,COMBINING ACUTE ACCENT,CombAcute,acutecomb
+0302,COMBINING CIRCUMFLEX ACCENT,CombCircum,circumflexcomb
+0303,COMBINING TILDE,CombTilde,tildecomb
+0308,COMBINING DIAERESIS,CombDiaer,dieresiscomb
+030A,COMBINING RING ABOVE,CombRingAbv,ringcomb
+2010,HYPHEN,Hyphen,hyphentwo
+2011,NON-BREAKING HYPHEN,NonBreakingHyphen,nonbreakinghyphen
+25CC,DOTTED CIRCLE,DottedCirc,dottedCircle
