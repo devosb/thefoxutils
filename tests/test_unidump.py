@@ -14,7 +14,7 @@ class UnidumpTests(unittest.TestCase):
         ucd = unidump.read_ucd("ucd.pickle.xz")
         parser = unidump.cmdline()
         args = parser.parse_args(["/dev/null"])
-        self.options = unidump.Options(args, "dump", "utf_8", False, False, False, False, ucd)
+        self.options = unidump.Options(args, ucd)
 
     def tearDown(self):
         os.chdir('../../..')
@@ -24,44 +24,57 @@ class UnidumpTests(unittest.TestCase):
     # Difference is probably the Python interperter storing Unicode strings as UTF-16 or UTF-32.
     # With UTF-16 a non plane 0 character will return two characters from the ord() call.
 
+    # format output
+
+    def test_format_output(self):
+        output = "U+0031 DIGIT ONE"
+        self.assertEqual(output + "\n", unidump.formatoutput(self.options, output))
+
     # dump file position
 
     def test_posStart(self):
-        self.assertEqual("U+0031 DIGIT ONE", next(unidump.dumpfile(self.options, "position.txt", 1, 1)))
+        self.assertEqual("U+0031 DIGIT ONE", next(unidump.dumpfile(self.options, "position.txt")))
 
     def test_posLine(self):
-        self.assertEqual("U+0032 DIGIT TWO", next(unidump.dumpfile(self.options, "position.txt", 2, 1)))
+        self.options.args.line = 2
+        self.assertEqual("U+0032 DIGIT TWO", next(unidump.dumpfile(self.options, "position.txt")))
 
     def test_posLineColumn(self):
-        self.assertEqual("U+0034 DIGIT FOUR", next(unidump.dumpfile(self.options, "position.txt", 4, 6)))
+        self.options.args.line = 4
+        self.options.args.column = 6
+        self.assertEqual("U+0034 DIGIT FOUR", next(unidump.dumpfile(self.options, "position.txt")))
 
     def test_posNFC(self):
+        self.options.args.column = 2
         self.assertEqual("U+00E9 LATIN SMALL LETTER E WITH ACUTE",
-                         next(unidump.dumpfile(self.options, os.path.join("..", "tf", "nf-none.txt"), 1, 2)))
+                         next(unidump.dumpfile(self.options, os.path.join("..", "tf", "nf-none.txt"))))
 
     def test_posNFD(self):
+        self.options.args.column = 7
         self.assertEqual("U+0301 COMBINING ACUTE ACCENT",
-                         next(unidump.dumpfile(self.options, os.path.join("..", "tf", "nf-none.txt"), 1, 7)))
+                         next(unidump.dumpfile(self.options, os.path.join("..", "tf", "nf-none.txt"))))
 
     # count
 
     def test_countFile(self):
-        unidump.countfile(self.options, "position.txt", 1, 1)
-        self.assertEqual(2, self.options.count['1'], 'one')
-        self.assertEqual(2, self.options.count['4'], 'four')
-        self.assertEqual(3, self.options.count['e'], 'letter e')
+        count = dict()
+        unidump.countfile(self.options, count, "position.txt")
+        self.assertEqual(2, count['1'], 'one')
+        self.assertEqual(2, count['4'], 'four')
+        self.assertEqual(3, count['e'], 'letter e')
 
     def test_countFiles(self):
+        count = dict()
         # this displays the output
-        # unidump.countfiles(self.options, ["position.txt", "position.txt"], 1, 1)
+        # unidump.countfiles(self.options, count, ["position.txt", "position.txt"])
 
         # does not display the output, but does tests a (slightly) different function
-        unidump.countfile(self.options, "position.txt", 1, 1)
-        unidump.countfile(self.options, "position.txt", 1, 1)
+        unidump.countfile(self.options, count, "position.txt")
+        unidump.countfile(self.options, count, "position.txt")
 
-        self.assertEqual(4, self.options.count['1'], 'one')
-        self.assertEqual(4, self.options.count['4'], 'four')
-        self.assertEqual(6, self.options.count['e'], 'letter e')
+        self.assertEqual(4, count['1'], 'one')
+        self.assertEqual(4, count['4'], 'four')
+        self.assertEqual(6, count['e'], 'letter e')
 
     # usv
 

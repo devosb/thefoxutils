@@ -46,27 +46,18 @@ def main():
         update_ucd(args.file, ucdCacheFilename)
     else:
         ucd = read_ucd(ucdCacheFilename)
-        options = Options(args, 'na', args.encoding, args.octets, args.python, args.eol, args.debug, ucd)
+        options = Options(args, ucd)
         if args.count:
-            countfiles(options, args.file, args.line, args.column)
+            countfiles(options)
         else:
-            dumpfiles(options, args.file, args.line, args.column)
+            dumpfiles(options)
 
 
 class Options(object):
 
-    def __init__(self, args, mode, encoding, show_octets, python_escape, stop, debug, ucd):
+    def __init__(self, args, ucd):
         self.args = args
-        self.mode = mode
-        self.encoding = encoding
-        self.show_octets = show_octets
-        self.python_escape = python_escape
-        self.stop = stop
-        self.debug = debug
-
         self.ucd = ucd
-
-        self.count = dict()
 
 
 def update_ucd(unicodeDataFilenames, ucdCacheFilename):
@@ -105,17 +96,17 @@ def read_ucd(ucdCacheFile):
     return ucd
 
 
-def dumpfiles(options, input_filenames, start_line, start_column):
+def dumpfiles(options):
     """Show Unicode values for the characters in the files."""
 
-    for inputFilename in input_filenames:
-        for display in dumpfile(options, inputFilename, start_line, start_column):
+    for inputFilename in options.args.file:
+        for display in dumpfile(options, inputFilename):
             print(formatoutput(options, display), end='')
 
 
 def formatoutput(options, display):
     """Format contents of a file's output in a useful manor."""
-    if options.python_escape or options.args.escape:
+    if options.args.python or options.args.escape:
         if display == '\\u000a':
             return '\n'
         else:
@@ -124,54 +115,55 @@ def formatoutput(options, display):
         return display + '\n'
 
 
-def dumpfile(options, input_filename, start_line, start_column):
+def dumpfile(options, input_filename):
     """Show Unicode values for the characters in the file."""
 
-    for cc in readfile(options, input_filename, start_line, start_column):
+    for cc in readfile(options, input_filename):
         display = format(options, cc)
         yield display
 
 
-def countfiles(options, input_filenames, start_line, start_column):
+def countfiles(options):
     """Count characters in the files"""
 
-    for input_filename in input_filenames:
-        countfile(options, input_filename, start_line, start_column)
+    count = dict()
+    for input_filename in options.args.file:
+        countfile(options, count, input_filename)
 
-    characters = sorted(options.count.keys())
+    characters = sorted(count.keys())
     for cc in characters:
-        display = "%7d %s" % (options.count[cc], format(options, cc))
+        display = "%7d %s" % (count[cc], format(options, cc))
         print(display)
 
 
-def countfile(options, input_filename, start_line, start_column):
+def countfile(options, count, input_filename):
     """Count characters in the file"""
 
-    for cc in readfile(options, input_filename, start_line, start_column):
-        if cc in options.count:
-            options.count[cc] += 1
+    for cc in readfile(options, input_filename):
+        if cc in count:
+            count[cc] += 1
         else:
-            options.count[cc] = 1
+            count[cc] = 1
 
 
-def readfile(options, input_filename, start_line, start_column):
+def readfile(options, input_filename):
     """Return each character in the file, or requested subset of the file."""
 
-    with open(input_filename, 'r', encoding=options.encoding, errors=options.args.errors, newline='') as input_file:
+    with open(input_filename, 'r', encoding=options.args.encoding, errors=options.args.errors, newline='') as input_file:
         lineno = 0
         columnno = 0
         for line in input_file:
             lineno = lineno + 1
-            if options.debug:
+            if options.args.debug:
                 print("DEBUG: reading a line")
-            if lineno < start_line:
+            if lineno < options.args.line:
                 continue
             for i in range(len(line)):
                 columnno = columnno + 1
-                if columnno < start_column:
+                if columnno < options.args.column:
                     continue
                 yield line[i]
-            if options.stop:
+            if options.args.eol:
                 break
 
 
@@ -179,10 +171,10 @@ def format(options, cc):
     """Format the current character for display."""
 
     display = "%s %s" % (usv_format(cc), name_format(options, cc))
-    if options.show_octets:
+    if options.args.octets:
         # 19 characters is enough to display four bytes in hex with leading 0x's
         display = "%-19s %s" % (octets(options, cc), display)
-    if options.python_escape:
+    if options.args.python:
         # string literals do not need name or octets
         display = python(cc)
     if options.args.escape:
@@ -233,7 +225,7 @@ def escape(cc):
 def octets(options, cc):
     """Format each byte of the encoded character."""
 
-    utf8_bytes = cc.encode(options.encoding)
+    utf8_bytes = cc.encode(options.args.encoding)
     octets = []
     for utf8_byte in utf8_bytes:
         byte_in_hex = "0x%02X" % utf8_byte
