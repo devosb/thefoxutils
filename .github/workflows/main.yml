@@ -28,7 +28,6 @@ jobs:
 
   test:
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
@@ -40,13 +39,10 @@ jobs:
         include:
           - os: ubuntu-latest
             python-version: 3.13
-            experimental: true
           - os: macos-latest
             python-version: 3.13
-            experimental: true
           - os: windows-latest
             python-version: 3.13
-            experimental: true
 
     steps:
       - uses: actions/checkout@v4

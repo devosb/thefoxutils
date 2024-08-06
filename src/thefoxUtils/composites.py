@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import fontParts.world as fontparts
+from collections import Counter
 import argparse
 
 
@@ -11,7 +12,9 @@ def main():
     args = parser.parse_args()
 
     font = fontparts.OpenFont(args.ufo)
+    possible_cleanup = dict()
     cleanup = dict()
+    shared_components = Counter()
     for glyph in font:
         if len(glyph.components) > 0:
             for component in glyph.components:
@@ -29,8 +32,16 @@ def main():
                 else:
                     flag = True
                 if flag:
-                    print(f'Warning: {component.baseGlyph} from {glyph.name} can be cleaned up')
-                    cleanup[glyph.name] = component.baseGlyph
+                    shared_components[component.baseGlyph] += 1
+                    possible_cleanup[glyph.name] = component.baseGlyph
+
+    for glyph_name, base_glyph_name in possible_cleanup.items():
+        names = f'{base_glyph_name} from {glyph_name}'
+        if shared_components[base_glyph_name] > 1:
+            print(f'Note: {names} is shared by {shared_components[base_glyph_name]} other glyphs')
+        else:
+            print(f'Fix: {names} can be cleaned up')
+            cleanup[glyph_name] = base_glyph_name
 
     if args.cleanup:
         for glyph_name, base_glyph_name in cleanup.items():
