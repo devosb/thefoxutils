@@ -32,17 +32,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.9", "pypy3.10", "graalpy-24.0"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.9", "pypy3.10"]  # "graalpy-24.0"
         exclude:
-          - os: ubuntu-latest
-            python-version: graalpy-24.0
-        include:
-          - os: ubuntu-latest
-            python-version: 3.13
           - os: macos-latest
-            python-version: 3.13
+            python-version: 3.8
+        include:
           - os: windows-latest
-            python-version: 3.13
+            python-version: 3.12
 
     steps:
       - uses: actions/checkout@v4
@@ -95,7 +91,6 @@ jobs:
           path: dist/
 
   production:
-    name: Publish to PyPI
     if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
     needs:
     - build

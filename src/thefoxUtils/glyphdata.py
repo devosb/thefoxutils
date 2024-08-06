@@ -99,7 +99,11 @@ def read_xml(filename):
         if 'unicode' in char.attrib:
             codepoint = int(char.attrib['unicode'], 16)
             name = char.attrib['name']
-            uniname = char.attrib['description']
+            if 'description' in char.attrib:
+                uniname = char.attrib['description']
+            else:
+                uniname = '(GA)'
+                print(f'no description for {name} at {codepoint:04X}')
             name_data[codepoint] = (codepoint, name, uniname)
 
             if 'altNames' in char.attrib:
