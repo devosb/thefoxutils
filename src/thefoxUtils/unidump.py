@@ -11,6 +11,7 @@ def cmdline():
     parser = argparse.ArgumentParser(description='Show USV values of characters in a file')
     parser.add_argument('--count', help='count characters instead of just listing them',
                         action='store_true')
+    parser.add_argument('--quote', help='quote a Unicode character')
     parser.add_argument('--encoding', help='file encoding',
                         default='utf-8')
     parser.add_argument('--errors', help='error mode for encoding',
@@ -47,7 +48,9 @@ def main():
     else:
         ucd = read_ucd(ucdCacheFilename)
         options = Options(args, ucd)
-        if args.count:
+        if args.quote:
+            quotechar(options)
+        elif args.count:
             countfiles(options)
         else:
             dumpfiles(options)
@@ -94,6 +97,13 @@ def read_ucd(ucdCacheFile):
     with lzma.open(ucdCacheFile, 'rb') as ucdCache:
         ucd = pickle.load(ucdCache)
     return ucd
+
+
+def quotechar(options):
+    """Show Unicode values for the character on the command line."""
+
+    cc = usv2cc(options.args.quote)
+    print(format(options, cc))
 
 
 def dumpfiles(options):
@@ -192,6 +202,12 @@ def name_format(options, cc):
     """Find name of the character."""
     usv = cc2usv(cc)
     return options.ucd.get(usv, "(Unknown)")
+
+
+def usv2cc(usv):
+    """Convert string USV to a character."""
+    codepoint = int(usv, 16)
+    return(chr(codepoint))
 
 
 def cc2usv(cc):

@@ -204,6 +204,11 @@ class UnidumpTests(unittest.TestCase):
     def test_octetsPlane1(self):
         self.assertEqual("0xF0 0x9D 0x94 0x90", unidump.octets(self.options, "\U0001D510"))
 
+    # conversions
+
+    def test_usv2cc(self):
+        self.assertEqual("A", unidump.usv2cc("0041"))
+
 
 if __name__ == "__main__":
     unittest.main()
