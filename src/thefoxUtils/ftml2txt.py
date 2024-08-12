@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
-from xml.etree.ElementTree import ElementTree
-from thefoxUtils import unikey
+import argparse
 import os
 import os.path
-import argparse
+from xml.etree.ElementTree import ElementTree
+
+from thefoxUtils import __name__, __version__, unikey
 
 
 def main():
@@ -12,7 +13,7 @@ def main():
     parser.add_argument('-o', '--output', help='Output directory')
     parser.add_argument('-s', '--sample', help='Sample project to reference')
     parser.add_argument('file', help='FTML files to process', nargs='+')
-    parser.add_argument('--version', action='version', version='%(prog)s ' + '0.1')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
     args = parser.parse_args()
 
     if args.sample:

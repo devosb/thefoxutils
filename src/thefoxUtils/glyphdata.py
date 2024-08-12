@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 
-import xml.etree.ElementTree as ET
-import fontParts.world as fontparts
-import csv
 import argparse
+import csv
+import xml.etree.ElementTree as ET
+
+import fontParts.world as fontparts
+
+from thefoxUtils import __name__, __version__
 
 
 def main():
@@ -12,8 +15,7 @@ def main():
     parser.add_argument('reference', help='Reference names to compare to')
     parser.add_argument('-f', '--filter', help='Only report on codepoints in filter')
     parser.add_argument('-r', '--report', help='Report on differences from the Glyphs.app XML file', action='store_true')
-    parser.add_argument('--version', action='version',
-                        version='%(prog)s ' + '(The Fox Utils) ' + '23.6')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
     args = parser.parse_args()
 
     test_data = reference_data = reference_alt_data = filter_data = None

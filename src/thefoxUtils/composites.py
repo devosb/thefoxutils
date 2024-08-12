@@ -1,14 +1,19 @@
 #!/usr/bin/python3
 
-import fontParts.world as fontparts
-from collections import Counter
 import argparse
+from collections import Counter
+
+import fontParts.world as fontparts
+
+from thefoxUtils import __name__, __version__
 
 
 def main():
     parser = argparse.ArgumentParser(description='Review and cleanup composites')
     parser.add_argument('-c', '--cleanup', help='Cleanup composites', action='store_true')
     parser.add_argument('ufo', help='UFO')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
+
     args = parser.parse_args()
 
     font = fontparts.OpenFont(args.ufo)

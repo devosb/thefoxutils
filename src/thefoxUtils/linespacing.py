@@ -8,7 +8,7 @@ import uharfbuzz as hb
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
 
-from thefoxUtils import unidump
+from thefoxUtils import __name__, __version__, unidump
 
 
 def main():
@@ -16,6 +16,7 @@ def main():
     parser.add_argument('test', help='directory of test data')
     parser.add_argument('fonts', help='fonts to read', nargs='+')
     parser.add_argument('-e', '--extra', help='extra directory of test data')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
     args = parser.parse_args()
 
     test_words = find_words(args.test)

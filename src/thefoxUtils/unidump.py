@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 
+import argparse
+import lzma
 import os
 import os.path
 import pickle
-import lzma
-import argparse
+
+from thefoxUtils import __name__, __version__
 
 
 def cmdline():
@@ -34,7 +36,7 @@ def cmdline():
                         action='store_true')
     parser.add_argument('file', help='file to process', nargs='+')
     parser.add_argument('--version', action='version',
-                        version='%(prog)s ' + '(The Fox Utils) ' + '21.7')
+                        version='%(prog)s ' + f'({__name__}) {__version__}')
     return parser
 
 

@@ -1,15 +1,17 @@
 #!/usr/bin/python3
 
-import re
-import os.path
 import argparse
+import os.path
+import re
+
+from thefoxUtils import __name__, __version__
 
 
 def main():
     parser = argparse.ArgumentParser(description='Produce literal text from escaped text')
     parser.add_argument('-o', '--output', help='output file')
     parser.add_argument('file', help='File to process', nargs='+')
-    parser.add_argument('--version', action='version', version='%(prog)s ' + '(The Fox Utils) ' + '21.7')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
     args = parser.parse_args()
 
     if args.output:
