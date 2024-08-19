@@ -4,14 +4,14 @@ import argparse
 import os.path
 import re
 
-from thefoxUtils import __name__, __version__
+from thefoxUtils import version
 
 
 def main():
     parser = argparse.ArgumentParser(description='Produce literal text from escaped text')
     parser.add_argument('-o', '--output', help='output file')
     parser.add_argument('file', help='File to process', nargs='+')
-    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + version)
     args = parser.parse_args()
 
     if args.output:

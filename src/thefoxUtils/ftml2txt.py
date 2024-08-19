@@ -5,7 +5,7 @@ import os
 import os.path
 from xml.etree.ElementTree import ElementTree
 
-from thefoxUtils import __name__, __version__, unikey
+from thefoxUtils import version, unikey
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     parser.add_argument('-o', '--output', help='Output directory')
     parser.add_argument('-s', '--sample', help='Sample project to reference')
     parser.add_argument('file', help='FTML files to process', nargs='+')
-    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + version)
     args = parser.parse_args()
 
     if args.sample:

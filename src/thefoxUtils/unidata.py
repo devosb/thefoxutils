@@ -3,11 +3,11 @@
 import argparse
 import csv
 
-from thefoxUtils import __name__, __version__
+from thefoxUtils import version
 
 parser = argparse.ArgumentParser()
 parser.add_argument("files", help="files to read", nargs="*")
-parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
+parser.add_argument('--version', action='version', version='%(prog)s ' + version)
 args = parser.parse_args()
 
 

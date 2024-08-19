@@ -5,14 +5,14 @@ from collections import Counter
 
 import fontParts.world as fontparts
 
-from thefoxUtils import __name__, __version__
+from thefoxUtils import version
 
 
 def main():
     parser = argparse.ArgumentParser(description='Review and cleanup composites')
     parser.add_argument('-c', '--cleanup', help='Cleanup composites', action='store_true')
     parser.add_argument('ufo', help='UFO')
-    parser.add_argument('--version', action='version', version='%(prog)s ' + f'({__name__}) {__version__}')
+    parser.add_argument('--version', action='version', version='%(prog)s ' + version)
 
     args = parser.parse_args()
 

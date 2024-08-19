@@ -4,7 +4,7 @@ import argparse
 import os
 import unicodedata
 
-from thefoxUtils import __name__, __version__
+from thefoxUtils import version
 
 # from palaso.teckit import engine
 
@@ -29,7 +29,7 @@ def main():
                         help='trim trailing whitespace')
     parser.add_argument('file', help='files to process', nargs='+')
     parser.add_argument('--version', action='version',
-                        version='%(prog)s ' + f'({__name__}) {__version__}')
+                        version='%(prog)s ' + version)
     args = parser.parse_args()
 
     process_files(args)

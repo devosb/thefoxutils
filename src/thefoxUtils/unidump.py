@@ -6,7 +6,7 @@ import os
 import os.path
 import pickle
 
-from thefoxUtils import __name__, __version__
+from thefoxUtils import version
 
 
 def cmdline():
@@ -36,7 +36,7 @@ def cmdline():
                         action='store_true')
     parser.add_argument('file', help='file to process', nargs='+')
     parser.add_argument('--version', action='version',
-                        version='%(prog)s ' + f'({__name__}) {__version__}')
+                        version='%(prog)s ' + version)
     return parser
 
 
