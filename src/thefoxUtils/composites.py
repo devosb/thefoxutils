@@ -21,7 +21,9 @@ def main():
     cleanup = dict()
     shared_components = Counter()
     for glyph in font:
-        if len(glyph.components) > 0:
+        number_of_components = len(glyph.components)
+        number_of_contours = len(glyph.contours)
+        if number_of_components > 0:
             for component in glyph.components:
                 flag = False
                 component_glyph = font[component.baseGlyph]
@@ -34,23 +36,28 @@ def main():
                     component_base_glyph_name = component.baseGlyph.split('.')[0]
                     if component_base_glyph_name not in font:
                         flag = True
+                    elif number_of_components == 1 and number_of_contours == 0:
+                        flag = True
                 else:
                     flag = True
+                shared_components[component.baseGlyph] += 1
                 if flag:
-                    shared_components[component.baseGlyph] += 1
                     possible_cleanup[glyph.name] = component.baseGlyph
+                    if number_of_components != 1 or number_of_contours != 0:
+                        print(f'Check: {glyph.name} has {number_of_components} components and {number_of_contours} contours')
 
     for glyph_name, base_glyph_name in possible_cleanup.items():
-        names = f'{base_glyph_name} from {glyph_name}'
+        report_core = report(base_glyph_name, 'from', glyph_name)
         if shared_components[base_glyph_name] > 1:
-            print(f'Note: {names} is shared by {shared_components[base_glyph_name]} other glyphs')
+            print(f'Note: {report_core} is shared by {shared_components[base_glyph_name]} glyphs')
         else:
-            print(f'Fix: {names} can be cleaned up')
+            print(f'Fix: {report_core} can be cleaned up')
             cleanup[glyph_name] = base_glyph_name
 
     if args.cleanup:
         for glyph_name, base_glyph_name in cleanup.items():
-            print(f'Info: {base_glyph_name} from {glyph_name} is being cleaned up')
+            report_core = report(base_glyph_name, 'and decompose', glyph_name)
+            print(f'Info: Delete {report_core}')
             glyph = font[glyph_name]
             glyph.decompose()
             del font[base_glyph_name]
@@ -58,6 +65,10 @@ def main():
         font.changed()
         font.save()
         font.close()
+
+
+def report(base_glyph_name, bridge, glyph_name):
+    return f'{base_glyph_name} (countors) {bridge} {glyph_name} (composite)'
 
 
 if __name__ == '__main__':

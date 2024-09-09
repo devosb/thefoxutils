@@ -94,6 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
+      url: https://test.pypi.org/p/thefoxUtils
     permissions:
       id-token: write  # mandatory for trusted publishing
 
@@ -116,6 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
+      url: https://pypi.org/p/thefoxUtils
     permissions:
       id-token: write  # mandatory for trusted publishing
 
