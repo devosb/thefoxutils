@@ -59,7 +59,7 @@ class FTML:
 
     def __init__(self):
         self.testgroups = list()
-        self.testgroup = None
+        self.languages = dict()
 
     def parse(self, ftml_filename):
         """Parse FTML file"""
@@ -68,11 +68,21 @@ class FTML:
         ftml = ElementTree()
         ftml.parse(ftml_filename)
 
+        # Extract languages from FTML file
+        head = ftml.find('head')
+        styles = head.find('styles')
+        if styles:
+            for style in styles.iter('style'):
+                name = style.get('name')
+                language = style.get('lang')
+                self.languages[name] = language
+
         # Extract text from FTML file
         for testgroup in ftml.iter('testgroup'):
             tests = self.add_testgroup(testgroup.get('label'))
             for test in testgroup.iter('test'):
                 label = test.get('label')
+                stylename = test.get('stylename')
                 comment = test.findtext('comment', '')
                 raw_data = test.find('string').text
                 char_data = unikey.modify(raw_data)
@@ -83,7 +93,8 @@ class FTML:
                         pass
                     else:
                         data += char
-                tests.add_test(label, comment, data)
+                language = self.languages.get(stylename, None)
+                tests.add_test(label, comment, data, language)
 
     def add_testgroup(self, data):
         """Add a TestGroup with data"""
@@ -147,9 +158,9 @@ class TestGroup:
         self.data = label
         self.tests = list()
 
-    def add_test(self, label, comment, data):
+    def add_test(self, label, comment, data, language):
         """Add test"""
-        test = Test(label, comment, data)
+        test = Test(label, comment, data, language)
         self.tests.append(test)
         return test
 
@@ -183,10 +194,11 @@ class TestGroup:
 class Test:
     """Test in an FTML file"""
 
-    def __init__(self, label, comment, data):
+    def __init__(self, label, comment, data, language):
         self.label = label
         self.comment = comment
         self.data = data
+        self.language = language
 
     def text(self):
         """Format data for a plain text file"""
@@ -194,9 +206,13 @@ class Test:
 
     def html(self):
         """Format data for a HTML file"""
+        if self.language:
+            lang = f' lang={self.language}'
+        else:
+            lang = ''
         label = f'<p>{self.label}: {self.comment}</p>\n'
-        local = f'<p>{self.data}</p>\n'
-        woff2 = f'<p class=dev>{self.data}</p>\n'
+        local = f'<p{lang}>{self.data}</p>\n'
+        woff2 = f'<p{lang} class=dev>{self.data}</p>\n'
         return label + local + woff2
 
     def sfm(self):

@@ -136,6 +136,8 @@ jobs:
     needs:
       - production
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
 
     steps:
       - name: Retrieve distribution packages
