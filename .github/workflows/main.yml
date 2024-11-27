@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   lint:
@@ -32,12 +33,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.9", "pypy3.10"]  # "graalpy-24.0"
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "pypy3.9", "pypy3.10"]  # "graalpy-24.0"
         include:
           - os: macos-latest
-            python-version: 3.12
+            python-version: 3.13
           - os: windows-latest
-            python-version: 3.12
+            python-version: 3.13
 
     steps:
       - uses: actions/checkout@v4
@@ -136,8 +137,6 @@ jobs:
     needs:
       - production
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
 
     steps:
       - name: Retrieve distribution packages

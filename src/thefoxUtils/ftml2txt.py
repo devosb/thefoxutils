@@ -4,6 +4,7 @@ import argparse
 import os
 import os.path
 from xml.etree.ElementTree import ElementTree
+from collections import namedtuple
 
 from thefoxUtils import version, unikey
 
@@ -59,7 +60,7 @@ class FTML:
 
     def __init__(self):
         self.testgroups = list()
-        self.languages = dict()
+        self.styles = dict()
 
     def parse(self, ftml_filename):
         """Parse FTML file"""
@@ -68,14 +69,16 @@ class FTML:
         ftml = ElementTree()
         ftml.parse(ftml_filename)
 
-        # Extract languages from FTML file
+        # Extract styles from FTML file
         head = ftml.find('head')
         styles = head.find('styles')
-        if styles:
+        if styles is not None:
+            Style = namedtuple('Style', ['name', 'lang', 'feats'])
             for style in styles.iter('style'):
                 name = style.get('name')
                 language = style.get('lang')
-                self.languages[name] = language
+                features = style.get('feats')
+                self.styles[name] = Style(name, language, features)
 
         # Extract text from FTML file
         for testgroup in ftml.iter('testgroup'):
@@ -93,8 +96,8 @@ class FTML:
                         pass
                     else:
                         data += char
-                language = self.languages.get(stylename, None)
-                tests.add_test(label, comment, data, language)
+                style = self.styles.get(stylename, None)
+                tests.add_test(label, comment, data, style)
 
     def add_testgroup(self, data):
         """Add a TestGroup with data"""
@@ -116,6 +119,19 @@ class FTML:
 <head>
 <link rel="stylesheet" href="dev.css" type="text/css">
 <meta charset="utf-8">
+<style>
+"""
+        # for name, style in self.styles.items():
+        for style in self.styles.values():
+            if style.feats is not None:
+                html += f""".{style.name} {{
+    -moz-font-feature-settings: {style.feats};
+    -ms-font-feature-settings: {style.feats};
+    -webkit-font-feature-settings: {style.feats};
+    font-feature-settings: {style.feats};
+}}
+"""
+        html += """</style>
 </head>
 <body>
 """
@@ -158,9 +174,9 @@ class TestGroup:
         self.data = label
         self.tests = list()
 
-    def add_test(self, label, comment, data, language):
+    def add_test(self, label, comment, data, style):
         """Add test"""
-        test = Test(label, comment, data, language)
+        test = Test(label, comment, data, style)
         self.tests.append(test)
         return test
 
@@ -194,11 +210,11 @@ class TestGroup:
 class Test:
     """Test in an FTML file"""
 
-    def __init__(self, label, comment, data, language):
+    def __init__(self, label, comment, data, style):
         self.label = label
         self.comment = comment
         self.data = data
-        self.language = language
+        self.style = style
 
     def text(self):
         """Format data for a plain text file"""
@@ -206,13 +222,17 @@ class Test:
 
     def html(self):
         """Format data for a HTML file"""
-        if self.language:
-            lang = f' lang={self.language}'
-        else:
-            lang = ''
+        lang = ''
+        classes = ' class="dev'
+        if self.style:
+            if self.style.lang:
+                lang = f' lang={self.style.lang}'
+            if self.style.feats:
+                classes += f' {self.style.name}'
+        classes += '"'
         label = f'<p>{self.label}: {self.comment}</p>\n'
         local = f'<p{lang}>{self.data}</p>\n'
-        woff2 = f'<p{lang} class=dev>{self.data}</p>\n'
+        woff2 = f'<p{lang}{classes}>{self.data}</p>\n'
         return label + local + woff2
 
     def sfm(self):
