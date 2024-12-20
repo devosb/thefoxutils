@@ -16,14 +16,15 @@ def main():
     parser.add_argument('test', help='directory of test data')
     parser.add_argument('fonts', help='fonts to read', nargs='+')
     parser.add_argument('-e', '--extra', help='extra directory of test data')
+    parser.add_argument('-n', '--lines', help='output last number of extrema from lines', default=10, type=int)
     parser.add_argument('--version', action='version', version='%(prog)s ' + version)
     args = parser.parse_args()
 
     test_words = find_words(args.test)
     test_words += find_words(args.extra)
     lowest_extremas, highest_extremas = find_extrema(test_words, args.fonts)
-    report(lowest_extremas)
-    report(highest_extremas)
+    report(lowest_extremas, args.lines)
+    report(highest_extremas, args.lines)
 
 
 class TestWord():
@@ -44,11 +45,12 @@ def find_words(test_dir):
     test_words = []
     text_files = glob.glob('**/*.*txt', root_dir=test_dir, recursive=True)
     for text_file in text_files:
+        print(f'Reading {text_file}')
         with open(os.path.join(test_dir, text_file), encoding='utf-8') as text:
-            line_num = 0
+            line_num = 1
             for line in text:
                 words = line.split()
-                word_num = 0
+                word_num = 1
                 for word in words:
                     test_word = TestWord(word, line_num, word_num, text_file)
                     test_words.append(test_word)
@@ -62,19 +64,21 @@ def find_extrema(test_words, font_filenames):
 
     lowest_extremas = []
     highest_extremas = []
+    lowest = 1000
+    highest = -1000
     for font_filename in font_filenames:
+        print(f'Processing {font_filename}')
         font = TTFont(font_filename)
-        upem = font['head'].unitsPerEm
-        lowest = upem
-        highest = -upem
-        glyph_set = font.getGlyphSet()
-        bp = BoundsPen(glyph_set)
 
         hb_blob = hb.Blob.from_file_path(font_filename)
         hb_face = hb.Face(hb_blob)
         hb_font = hb.Font(hb_face)
 
+        text_file = ''
         for test_word in test_words:
+            if test_word.text_filename != text_file:
+                print(f'Shaping {test_word.text_filename}')
+                text_file = test_word.text_filename
             buf = hb.Buffer()
             buf.add_str(test_word.text)
             buf.guess_segment_properties()
@@ -83,10 +87,14 @@ def find_extrema(test_words, font_filenames):
             infos = buf.glyph_infos
             positions = buf.glyph_positions
             for info, position in zip(infos, positions):
+                glyph_set = font.getGlyphSet()
+                bp = BoundsPen(glyph_set)
                 gid = info.codepoint
                 glyph_name = hb_font.glyph_to_string(gid)
                 glyph = glyph_set[glyph_name]
                 glyph.draw(bp)
+                if bp.bounds is None:
+                    continue
                 (xmin, ymin, xmax, ymax) = bp.bounds
                 y_offset = position.y_offset
                 low = ymin + y_offset
@@ -106,10 +114,14 @@ def find_extrema(test_words, font_filenames):
     return lowest_extremas, highest_extremas
 
 
-def report(extremas):
+def report(extremas, lines):
     """Output information on extremas"""
+    count = 1
     for extrema in extremas:
         print(extrema.report() + '\n')
+        count += 1
+        if count > lines:
+            break
 
 
 class Extrema:
