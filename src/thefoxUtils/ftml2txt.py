@@ -233,7 +233,7 @@ class Test:
         label = f'<p>{self.label}: {self.comment}</p>\n'
         local = f'<p{lang}>{self.data}</p>\n'
         woff2 = f'<p{lang}{classes}>{self.data}</p>\n'
-        return label + local + woff2
+        return label + woff2 + local
 
     def sfm(self):
         """Format data for a SFM file"""

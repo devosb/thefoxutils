@@ -2,9 +2,9 @@ name: Main
 
 on: [push, pull_request]
 
-# permissions:
-#   contents: read
-#   id-token: write
+permissions:
+  # contents: read
+  id-token: write
 
 jobs:
   lint:

@@ -14,3 +14,10 @@ where the file `UnicodeData.txt` comes from https://www.unicode.org/Public/UCD/l
 
 - `bumpversion minor`
 - `git push --follow-tags`
+
+## testing release
+
+- pip3 install fontParts
+- pip3 install uharfbuzz
+- pip install -i https://test.pypi.org/simple/ thefoxUtils
+- pip install -i https://test.pypi.org/simple/ thefoxUtils==24.8.0
