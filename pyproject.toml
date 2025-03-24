@@ -16,6 +16,7 @@ classifiers = [
 dependencies = [
     "fontParts",
     "uharfbuzz",
+    "cssutils",
 ]
 dynamic = ["version", "description"]
 
@@ -33,3 +34,4 @@ glyphdata = "thefoxUtils.glyphdata:main"
 ftml2txt = "thefoxUtils.ftml2txt:main"
 composites = "thefoxUtils.composites:main"
 linespacing = "thefoxUtils.linespacing:main"
+charset = "thefoxUtils.charset:main"
