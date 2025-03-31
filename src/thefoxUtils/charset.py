@@ -75,7 +75,7 @@ def get_codepoints(item):
         else:
             print(f'name file {item} does not exist')
             sys.exit(1)
-    elif item.endswith('.ttf') or item.endswith('.woff2'):
+    elif item.endswith('.ttf') or item.endswith('.otf') or item.endswith('.woff2'):
         codepoints = get_cmap(item)
     elif item.endswith('.css'):
         codepoints = get_range(item)

@@ -2,16 +2,14 @@ name: Main
 
 on: [push, pull_request]
 
-permissions:
-  # contents: read
-  id-token: write
-
 jobs:
   lint:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -72,6 +70,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -91,7 +91,7 @@ jobs:
 
   staging:
     needs:
-    - build
+      - build
     runs-on: ubuntu-latest
     environment:
       name: testpypi
@@ -100,21 +100,21 @@ jobs:
       id-token: write  # mandatory for trusted publishing
 
     steps:
-    - name: Retrieve distribution packages
-      uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Publish distribution to TestPyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        repository-url: https://test.pypi.org/legacy/
-        skip-existing: true
+      - name: Retrieve distribution packages
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
 
   production:
     if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
     needs:
-    - build
+      - build
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -123,20 +123,24 @@ jobs:
       id-token: write  # mandatory for trusted publishing
 
     steps:
-    - name: Retrieve distribution packages
-      uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Publish distribution to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        skip-existing: true
+      - name: Retrieve distribution packages
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
 
   release:
     needs:
       - production
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # mandatory for making GitHub Releases
+      id-token: write  # mandatory for sigstore
 
     steps:
       - name: Retrieve distribution packages
@@ -147,14 +151,19 @@ jobs:
       - name: Sign distribution with Sigstore
         uses: sigstore/gh-action-sigstore-python@v3.0.0
         with:
-          inputs: ./dist/*.tar.gz ./dist/*.whl
+          inputs: >-
+            ./dist/*.tar.gz
+            ./dist/*.whl
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          gh release create ${{ github.ref_name }} --repo '${{ github.repository }}' --notes ""
+        run: >-
+          gh release create
+          ${{ github.ref_name }}
+          --notes ""
       - name: Upload artifact signatures to GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          gh release upload ${{ github.ref_name }} dist/** --repo '${{ github.repository }}'
+        run: >-
+          gh release upload
+          ${{ github.ref_name }} dist/**

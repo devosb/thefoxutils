@@ -17,7 +17,9 @@ where the file `UnicodeData.txt` comes from https://www.unicode.org/Public/UCD/l
 
 ## testing release
 
+- python3 -m venv venv
+- source venv/bin/activate
 - pip3 install fontParts
 - pip3 install uharfbuzz
+- pip3 install cssutils
 - pip install -i https://test.pypi.org/simple/ thefoxUtils
-- pip install -i https://test.pypi.org/simple/ thefoxUtils==24.8.0
