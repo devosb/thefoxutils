@@ -11,6 +11,7 @@ from thefoxUtils import version, unikey
 
 def main():
     parser = argparse.ArgumentParser(description='Extract text from FTML files')
+    parser.add_argument('-i', '--interpolate', help='Project is interpolatable', action='store_true')
     parser.add_argument('-o', '--output', help='Output directory')
     parser.add_argument('-s', '--sample', help='Sample project to reference')
     parser.add_argument('file', help='FTML files to process', nargs='+')
@@ -41,7 +42,7 @@ def main():
         # Write HTML file
         html_filename = f'{dev}/web/{base_filename}.html'
         with open(html_filename, 'w', encoding='utf-8') as html_file:
-            html = ftml_data.html()
+            html = ftml_data.html(args.interpolate)
             html_file.write(html)
 
         if not args.sample:
@@ -112,7 +113,7 @@ class FTML:
             text += testgroup.text()
         return text
 
-    def html(self):
+    def html(self, interpolate):
         """Format data for a HTML file"""
         html = """<!DOCTYPE html>
 <html>
@@ -136,7 +137,7 @@ class FTML:
 <body>
 """
         for testgroup in self.testgroups:
-            html += testgroup.html()
+            html += testgroup.html(interpolate)
         html += """</body>
 </html>
 """
@@ -189,11 +190,11 @@ class TestGroup:
             text = text.replace(char, '\\' + char)
         return text
 
-    def html(self):
+    def html(self, interpolate):
         """Format data for a HTML file"""
         html = '<h1>' + self.data + '</h1>\n'
         for test in self.tests:
-            html += test.html()
+            html += test.html(interpolate)
         return html
 
     def sfm(self):
@@ -220,20 +221,31 @@ class Test:
         """Format data for a plain text file"""
         return self.label + ': ' + self.comment + ' ' + self.data + '\n'
 
-    def html(self):
+    def html(self, interpolate):
         """Format data for a HTML file"""
         lang = ''
-        classes = ' class="dev'
+        font = ' class="dev'
+        feats = ''
         if self.style:
             if self.style.lang:
                 lang = f' lang={self.style.lang}'
             if self.style.feats:
-                classes += f' {self.style.name}'
-        classes += '"'
+                feats += f' {self.style.name}'
+        feats += '"'
+        classes = f'{font}{feats}'
         label = f'<p>{self.label}: {self.comment}</p>\n'
         local = f'<p{lang}>{self.data}</p>\n'
-        woff2 = f'<p{lang}{classes}>{self.data}</p>\n'
-        return label + woff2 + local
+        static = f'<p{lang}{classes}>{self.data}</p>\n'
+        variable = '<p>\n'
+        variable += f'<span{lang}{font}V{feats}>{self.data} </span></p>\n'
+        variable += f'<span{lang}{font}VRegular{feats}>{self.data} </span>\n'
+        variable += f'<span{lang}{font}VMedium{feats}>{self.data} </span>\n'
+        variable += f'<span{lang}{font}VSemiBold{feats}>{self.data} </span>\n'
+        variable += f'<span{lang}{font}VBold{feats}>{self.data} </span>\n'
+        variable += '</p>\n'
+        if not interpolate:
+            variable = ''
+        return label + static + variable + local
 
     def sfm(self):
         """Format data for a SFM file"""
