@@ -4,27 +4,31 @@ import argparse
 import glob
 import os.path
 
+import tabulate
 import uharfbuzz as hb
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
+import fontParts.world as fontparts
 
 from thefoxUtils import version, unidump
 
 
 def main():
     parser = argparse.ArgumentParser(description='Calculations for linespacing')
-    parser.add_argument('test', help='directory of test data')
     parser.add_argument('fonts', help='fonts to read', nargs='+')
-    parser.add_argument('-e', '--extra', help='extra directory of test data')
-    parser.add_argument('-n', '--lines', help='output last number of extrema from lines', default=10, type=int)
+    parser.add_argument('-t', '--test', help='directory of test data (repeatable)', action='append')
+    parser.add_argument('-n', '--records', help='output last number of extrema', default=10, type=int)
     parser.add_argument('--version', action='version', version='%(prog)s ' + version)
     args = parser.parse_args()
 
-    test_words = find_words(args.test)
-    test_words += find_words(args.extra)
+    test_words = []
+    if args.test:
+        for test_dir in args.test:
+            test_words += find_words(test_dir)
     lowest_extremas, highest_extremas = find_extrema(test_words, args.fonts)
-    report(lowest_extremas, args.lines)
-    report(highest_extremas, args.lines)
+    report(lowest_extremas, args.records)
+    report(highest_extremas, args.records)
+    show(args.fonts)
 
 
 class TestWord():
@@ -67,6 +71,9 @@ def find_extrema(test_words, font_filenames):
     lowest = 1000
     highest = -1000
     for font_filename in font_filenames:
+        root, ext = os.path.splitext(font_filename)
+        if ext == '.ufo':
+            continue
         print(f'Processing {font_filename}')
         font = TTFont(font_filename)
 
@@ -114,13 +121,13 @@ def find_extrema(test_words, font_filenames):
     return lowest_extremas, highest_extremas
 
 
-def report(extremas, lines):
+def report(extremas, records):
     """Output information on extremas"""
     count = 1
     for extrema in extremas:
         print(extrema.report() + '\n')
         count += 1
-        if count > lines:
+        if count > records:
             break
 
 
@@ -137,6 +144,52 @@ class Extrema:
         for char in self.test_word.text:
             escape += unidump.escape(char)
         return f'{self.test_word.text}\n{escape}\nat {self.level} from {self.test_word.text_filename}:{self.test_word.line_num}:{self.test_word.word_num} in {self.font_filename}'
+
+
+def show(fonts):
+    for font_filename in fonts:
+        root, ext = os.path.splitext(font_filename)
+        if ext == '.ufo':
+            font = fontparts.OpenFont(font_filename)
+            rows = []
+
+            # code for reading from UFO from
+            # https://github.com/nlci/tools/blob/master/query-linespacing.py
+            rows.append(['ascender', font.info.ascender])
+            rows.append(['OS2WinAscent', font.info.openTypeOS2WinAscent])
+            rows.append(['OS2TypoAscender', font.info.openTypeOS2TypoAscender])
+            rows.append(['HheaAscender', font.info.openTypeHheaAscender])
+
+            rows.append(['descender', font.info.descender])
+            rows.append(['OS2WinDescent (-)', -font.info.openTypeOS2WinDescent])
+            rows.append(['OS2TypoDescender', font.info.openTypeOS2TypoDescender])
+            rows.append(['HheaDescender', font.info.openTypeHheaDescender])
+
+            rows.append(['OS2TypoLineGap', font.info.openTypeOS2TypoLineGap])
+            rows.append(['HheaLineGap', font.info.openTypeHheaLineGap])
+
+            output = tabulate.tabulate(rows, tablefmt='plain')
+            print(output)
+        else:
+            font = TTFont(font_filename)
+            rows = []
+
+            rows.append(['ascender', 0])
+            rows.append(['OS2WinAscent', font['OS/2'].usWinAscent])
+            rows.append(['OS2TypoAscender', font['OS/2'].sTypoAscender])
+            rows.append(['HheaAscender', font['hhea'].ascender])
+
+            rows.append(['descender', 0])
+            rows.append(['OS2WinDescent (-)', -font['OS/2'].usWinDescent])
+            rows.append(['OS2TypoDescender', font['OS/2'].sTypoDescender])
+            rows.append(['HheaDescender', font['hhea'].descender])
+
+            rows.append(['OS2TypoLineGap', font['OS/2'].sTypoLineGap])
+            rows.append(['HheaLineGap', font['hhea'].lineGap])
+
+            output = tabulate.tabulate(rows, tablefmt='plain')
+            print(output)
+            continue
 
 
 if __name__ == '__main__':
