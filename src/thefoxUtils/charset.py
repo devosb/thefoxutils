@@ -173,6 +173,7 @@ def output_block(differences, ucd, block_names):
 def output_ranges(differences, ucd, block_names, prefix, sep, suffix):
     # Code (except for code involving blocks)
     # gratefully copied from https://github.com/LucasFonts/css-unicode-range
+    ranges = []
     blocks = OrderedDict()
     b = ''
     r = []
