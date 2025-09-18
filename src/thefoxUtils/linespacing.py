@@ -28,7 +28,7 @@ def main():
     lowest_extremas, highest_extremas = find_extrema(test_words, args.fonts)
     report(lowest_extremas, args.records)
     report(highest_extremas, args.records)
-    show(args.fonts)
+    show(lowest_extremas, highest_extremas, args.fonts)
 
 
 class TestWord():
@@ -66,6 +66,8 @@ def find_words(test_dir):
 def find_extrema(test_words, font_filenames):
     """Find extrema in TTF files"""
 
+    if not test_words:
+        return [], []
     lowest_extremas = []
     highest_extremas = []
     lowest = 1000
@@ -146,50 +148,84 @@ class Extrema:
         return f'{self.test_word.text}\n{escape}\nat {self.level} from {self.test_word.text_filename}:{self.test_word.line_num}:{self.test_word.word_num} in {self.font_filename}'
 
 
-def show(fonts):
+def show(lowest, highest, fonts):
+    data = []
+
+    high_labels = [
+        'ascender', 'OS2WinAscent', 'OS2TypoAscender', 'HheaAscender',
+    ]
+    if highest:
+        high_labels.append('HIGHEST')
+
+    low_labels = [
+        'descender', 'OS2WinDescent (-)', 'OS2TypoDescender', 'HheaDescender',
+    ]
+    if lowest:
+        low_labels.append('LOWEST')
+
+    other_labels = [
+        'OS2TypoLineGap', 'HheaLineGap'
+    ]
+    labels = high_labels + low_labels + other_labels
+    if len(fonts) > 1:
+        labels.insert(0, 'Field')
+    data.append(labels)
+
+    align = ['left']
     for font_filename in fonts:
         root, ext = os.path.splitext(font_filename)
         if ext == '.ufo':
             font = fontparts.OpenFont(font_filename)
-            rows = []
 
-            # code for reading from UFO from
-            # https://github.com/nlci/tools/blob/master/query-linespacing.py
-            rows.append(['ascender', font.info.ascender])
-            rows.append(['OS2WinAscent', font.info.openTypeOS2WinAscent])
-            rows.append(['OS2TypoAscender', font.info.openTypeOS2TypoAscender])
-            rows.append(['HheaAscender', font.info.openTypeHheaAscender])
+            high_values = [
+                font.info.ascender,
+                font.info.openTypeOS2WinAscent,
+                font.info.openTypeOS2TypoAscender,
+                font.info.openTypeHheaAscender,
+            ]
+            low_values = [
+                font.info.descender,
+                -font.info.openTypeOS2WinDescent,
+                font.info.openTypeOS2TypoDescender,
+                font.info.openTypeHheaDescender,
+            ]
+            other_values = [
+                font.info.openTypeOS2TypoLineGap,
+                font.info.openTypeHheaLineGap
+            ]
 
-            rows.append(['descender', font.info.descender])
-            rows.append(['OS2WinDescent (-)', -font.info.openTypeOS2WinDescent])
-            rows.append(['OS2TypoDescender', font.info.openTypeOS2TypoDescender])
-            rows.append(['HheaDescender', font.info.openTypeHheaDescender])
-
-            rows.append(['OS2TypoLineGap', font.info.openTypeOS2TypoLineGap])
-            rows.append(['HheaLineGap', font.info.openTypeHheaLineGap])
-
-            output = tabulate.tabulate(rows, tablefmt='plain')
-            print(output)
         else:
             font = TTFont(font_filename)
-            rows = []
 
-            rows.append(['ascender', 0])
-            rows.append(['OS2WinAscent', font['OS/2'].usWinAscent])
-            rows.append(['OS2TypoAscender', font['OS/2'].sTypoAscender])
-            rows.append(['HheaAscender', font['hhea'].ascender])
+            high_values = [
+                '',
+                font['OS/2'].usWinAscent,
+                font['OS/2'].sTypoAscender,
+                font['hhea'].ascender,
+            ]
+            low_values = [
+                '',
+                -font['OS/2'].usWinDescent,
+                font['OS/2'].sTypoDescender,
+                font['hhea'].descender,
+            ]
+            other_values = [
+                font['OS/2'].sTypoLineGap,
+                font['hhea'].lineGap
+            ]
 
-            rows.append(['descender', 0])
-            rows.append(['OS2WinDescent (-)', -font['OS/2'].usWinDescent])
-            rows.append(['OS2TypoDescender', font['OS/2'].sTypoDescender])
-            rows.append(['HheaDescender', font['hhea'].descender])
+        if highest:
+            high_values.append(highest[0].level) 
+        if lowest:
+            low_values.append(lowest[0].level)
+        values = high_values + low_values + other_values
+        if len(fonts) > 1:
+            values.insert(0, root)
+        align.append('right')
+        data.append(values)
 
-            rows.append(['OS2TypoLineGap', font['OS/2'].sTypoLineGap])
-            rows.append(['HheaLineGap', font['hhea'].lineGap])
-
-            output = tabulate.tabulate(rows, tablefmt='plain')
-            print(output)
-            continue
+    output = tabulate.tabulate(zip(*data), tablefmt='plain', colalign=align)
+    print(output)
 
 
 if __name__ == '__main__':
