@@ -150,6 +150,57 @@ class TextFileTests(unittest.TestCase):
         text = u'\u0061\u0315\u0300\u05AE\U0001E4EF\u0062'
         self.assertEqual(u'\u0061\u05AE\u0300\U0001E4EF\u0315\u0062', tf.normalize('NFD', text))
 
+    # The combinations of 'a' and 'b' after the Unicode version (16 in this case) are from the examples in
+    # https://www.unicode.org/review/pri497/pri497-background.html
+
+    def tests_nfc_tus16_a_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d63\U00016d68'
+        self.assertEqual(u'\U00016d6a', tf.normalize('NFC', text))
+
+    def tests_nfc_tus16_b_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d67\U00016d68'
+        self.assertEqual(u'\U00016d68\U00016d67', tf.normalize('NFC', text))
+
+    def tests_nfc_tus16_a_b_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d63\U00016d67\U00016d68'
+        self.assertEqual(u'\U00016d6a\U00016d67', tf.normalize('NFC', text))
+
+    def tests_nfc_tus16_ab_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d69\U00016d68'
+        self.assertEqual(u'\U00016d6a\U00016d67', tf.normalize('NFC', text))
+
+    def tests_nfd_tus16_a_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d63\U00016d68'
+        self.assertEqual(u'\U00016d63\U00016d67\U00016d67', tf.normalize('NFD', text))
+
+    def tests_nfd_tus16_b_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d67\U00016d68'
+        self.assertEqual(u'\U00016d67\U00016d67\U00016d67', tf.normalize('NFD', text))
+
+    def tests_nfd_tus16_a_b_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d63\U00016d67\U00016d68'
+        self.assertEqual(u'\U00016d63\U00016d67\U00016d67\U00016d67', tf.normalize('NFD', text))
+
+    def tests_nfd_tus16_ab_bb(self):
+        if self.version.minor < 14:
+            return
+        text = u'\U00016d69\U00016d68'
+        self.assertEqual(u'\U00016d63\U00016d67\U00016d67\U00016d67', tf.normalize('NFD', text))
+
     # code still needs to be written for this
     def ignore_test_textMode(self):
         """Find occurrences of \r\r\n (that is CR CR LF) for a newline."""
